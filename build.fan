@@ -1,4 +1,4 @@
-using build::BuildPod
+using build
 
 class Build : BuildPod {
 
@@ -9,21 +9,21 @@ class Build : BuildPod {
 
 		meta	= [	"org.name"		: "Alien-Factory",
 					"org.uri"		: "http://www.alienfactory.co.uk/",
-					"vcs.uri"		: "https://bitbucket.org/Alien-Factory/afsizzle",
 					"proj.name"		: "Sizzle",
+					"proj.uri"		: "http://www.fantomfactory.org/pods/afSizzle",
+					"vcs.uri"		: "https://bitbucket.org/Alien-Factory/afsizzle",
 					"license.name"	: "BSD 2-Clause License",	
 					"repo.private"	: "true"
-
 				]
 
-
-
-		depends = ["sys 1.0", "afIoc 1.4+", "afBedSheet 1.0+", "util 1.0"]
+		depends = [	"sys 1.0", 
+					"xml 1.0"
+				]
+		
 		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`, `fan/internal/utils/`]
 		resDirs = [`doc/`]
 
 		docApi = true
 		docSrc = true
-
 	}
 }

@@ -2,6 +2,9 @@ Overview [#overview]
 ********************
 A CSS selector library.
 
+http://www.w3.org/TR/CSS21/selector.html
+
+https://developer.mozilla.org/en-US/docs/CSS-2_Quick_Reference/Selectors
 
 
 Install [#Install]
@@ -31,4 +34,4 @@ Release Notes [#releaseNotes]
 
 v0.0.2 [#v0.0.2]
 ----------------
- - New: Preview Release 
+ - New: Preview Release
