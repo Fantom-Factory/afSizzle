@@ -5,7 +5,6 @@ internal class TestPathTo : SizzleTest {
 	Void testUniversal() {
 		doc := XParser("<html><h1>names</h1><p><span>tom</span><span>dick</span><span>harry</span></p></html>".in).parseDoc
 		
-		Env.cur.err.printLine(doc.writeToStr)
 		h1	:= doc.root.elem("h1")
 		p	:= doc.root.elem("p")
 

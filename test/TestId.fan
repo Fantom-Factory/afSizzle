@@ -12,5 +12,8 @@ internal class TestId : SizzleTest {
 		verifyEq(elems.size, 2)
 		verifyElem(elems[0], "span", "tom")
 		verifyElem(elems[1], "span", "dick")
+
+		elems = doc.select("#dude")
+		verifyEq(elems.size, 0)
 	}
 }
