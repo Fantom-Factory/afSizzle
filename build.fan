@@ -5,7 +5,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afSizzle"
 		summary = "A library for querying XML documents by means of CSS selectors"
-		version = Version("0.0.1")
+		version = Version("0.0.2")
 
 		meta	= [	"org.name"		: "Alien-Factory",
 					"org.uri"		: "http://www.alienfactory.co.uk/",
@@ -25,5 +25,8 @@ class Build : BuildPod {
 
 		docApi = true
 		docSrc = true
+		
+		// exclude test code when building the pod
+		srcDirs = srcDirs.exclude { it.toStr.startsWith("test/") }
 	}
 }
