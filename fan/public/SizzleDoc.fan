@@ -2,15 +2,16 @@ using xml
 
 class SizzleDoc {
 	
-	private Str:DomBuckets buckets	:= [:]
-	private XElem	root
-	private Str		rootPath
+	private Str:DomBucket	buckets	:= Str:DomBucket[:] { caseInsensitive = true }
+	private XElem			root
+	private Str				rootPath
+	private DomBucket		rootBucket
 	
 	
 	private new make(XElem elem) {
 		this.root = elem
 		this.rootPath = pathTo(elem)
-		this.buckets[rootPath] = DomBuckets(elem)
+		this.rootBucket = DomBucket(elem, true)
 	}
 	
 	static new fromStr(Str xml) {
@@ -29,25 +30,60 @@ class SizzleDoc {
 	
 	@Operator
 	XElem[] get(Str selector) {
-				
-		s := Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]] |>.trim).replace("\\w2", Str<| [^#\s\[\]] |>.trim)
+		// TODO: make static
+		s := Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)?(?:\s*([>+]))? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]\<\+] |>.trim).replace("\\w2", Str<| [^#\s\[\]\<\+] |>.trim)
 		regex	:= Regex.fromStr(s)
 		
 		matcher := regex.matcher(" " + selector)
 		
 		selectors := Selector[,]
-		
 		while (matcher.find) {
 			selectors.add(Selector(matcher))
 		}		
 
-		// TODO: better err msg
+		// FIXME: better err msg
 		if (selectors.isEmpty)
 			throw Err("Shitty css selector: $selector")
 		
-		Env.cur.err.printLine(selectors.first)
+		got := rootBucket.select(selectors.last)
 		
-		return buckets[rootPath].select(selectors.first)
+		if (selectors.size == 1)
+			return got
+
+		Env.cur.err.printLine(selectors)
+		
+		got = got.findAll |element| {
+			elem := (XNode?) element
+			matches := true
+			selectors[0..<-1].eachr |sel| {
+				elem = findElemMatch(elem, sel)
+				Env.cur.err.printLine(elem)
+				if (!isElement(elem)) {
+					matches = false
+					return
+				}
+			}
+			return matches
+		}
+		
+		return got
+	}
+	
+	private XNode? findElemMatch(XNode? elem, Selector selector) {
+		if (selector.type == SelectorType.descendant) {
+			while (isElement(elem)) {
+				bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
+				matches := bucket.select(selector)
+				if (matches.size > 1)
+					throw Err("WTF! Should have ONE or ZERO elements: ${matches}")
+				if (matches.size == 1)
+					return matches.first
+				elem = elem.parent
+			}
+			return null
+		}
+		// TODO
+		return elem
 	}
 	
 	** An alias for 'get()'
@@ -57,7 +93,7 @@ class SizzleDoc {
 	
 	internal static Str pathTo(XElem elem, StrBuf path := StrBuf()) {
 		name := "/${elem.name}"
-		if (elem.parent != null && elem.parent is XElem) {
+		if (isElement(elem.parent)) {
 			sibs := ((XElem) elem.parent).elems.findAll { it.name == elem.name }
 			if (sibs.size > 1)
 				name += "[" + sibs.indexSame(elem).toStr + "]"
@@ -66,20 +102,31 @@ class SizzleDoc {
 		path.add(name)
 		return path.toStr
 	}
+
+	internal static XElem[] path(XElem elem, XElem[] elemPath := XElem[,]) {
+		if (isElement(elem.parent)) {
+			path(elem.parent, elemPath)
+		}
+		return elemPath.add(elem)
+	}
+	
+	private static Bool isElement(XNode? node) {
+		(node as XElem) != null
+	}
 }
 
 
-internal class DomBuckets {
+internal class DomBucket {
 	
 	ElemBucket 		typeBucket	:= ElemBucket() 
 	ElemBucket 		classBucket	:= ElemBucket() 
 	Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] { caseInsensitive = true }
 	
-	new make(XElem elem) {
-		walk(elem)
+	new make(XElem elem, Bool recurse) {
+		walk(elem, recurse)
 	}
 	
-	private Void walk(XElem elem) {
+	private Void walk(XElem elem, Bool recurse) {
 		typeBucket[elem.name] = elem
 		
 		elem.attr("class", false)?.val?.split?.each {
@@ -91,12 +138,13 @@ internal class DomBuckets {
 			bucket[it.val.trim] = elem
 		}
 		
-		elem.elems.each { walk(it) }
+		if (recurse)
+			elem.elems.each { walk(it, recurse) }
 	}
 	
 	XElem[] select(Selector selector) {
-		types 	:= (selector.type == "*") ? typeBucket.all : typeBucket[selector.type]
-		gotten	:= types
+		nmaes 	:= (selector.name == "*") ? typeBucket.all : typeBucket[selector.name]
+		gotten	:= nmaes
 		
 		if (!selector.id.isEmpty) {
 			ids 	:= attrBuckets["id"]?.get(selector.id)
@@ -132,21 +180,39 @@ internal class ElemBucket {
 
 internal const class Selector {
 	
-	const Str 	type
+	const Str 	name
 	const Str 	id
 	const Str[]	classes
 	const Str 	attrs
+	const SelectorType	type
 	
 	new make(RegexMatcher matcher) {
-		this.type 		= matcher.group(1) ?: "*"
+		this.name 		= matcher.group(1) ?: "*"
 		this.id 		= matcher.group(2)?.getRange(1..-1) ?: ""
 		this.classes	= matcher.group(3)?.split('.')?.exclude { it.isEmpty } ?: Str#.emptyList
 		this.attrs 		= matcher.group(4) ?: ""
+		this.type 		= SelectorType.fromSelector(matcher.group(5) ?: "")
 	}
 	
 	override Str toStr() {
 		sId := id.isEmpty ? "" : "#${id}"
 		sClasses := classes.isEmpty ? "" : "." + classes.join(".") 
-		return "${type}${sId}${sClasses}"
+		return "${name}${sId}${sClasses}"
+	}
+}
+
+internal enum class SelectorType {
+	descendant	(""),
+	child		(">"),
+	sibling		("+");
+	
+	const Str selector;
+	
+	private new make(Str selector) {
+		this.selector = selector
+	}
+	
+	static SelectorType fromSelector(Str selector) {
+		SelectorType.vals.find { it.selector == selector } ?: throw Err("Selector '${selector}' not known")
 	}
 }

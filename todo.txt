@@ -2,7 +2,28 @@
 For 1.0.0
 =========
 
+Css2.1
 
+Descendant selectors 
+
+Child selectors >
+
+Adjacent sibling selectors +
+
+[att]
+    Match when the element sets the "att" attribute, whatever the value of the attribute. 
+[att=val]
+    Match when the element's "att" attribute value is exactly "val". 
+[att~=val]
+    Represents an element with the att attribute whose value is a white space-separated list of words, one of which is exactly "val". 
+    If "val" contains white space, it will never represent anything (since the words are separated by spaces). 
+    If "val" is the empty string, it will never represent anything either. 
+[att|=val]
+    Represents an element with the att attribute, its value either being exactly "val" or beginning with "val"
+
+5.11.1 :first-child pseudo-class
+
+   
 
 For Future
 ==========

@@ -13,5 +13,8 @@ internal class TestType : SizzleTest {
 		verifyElem(elems[0], "span", "tom")
 		verifyElem(elems[1], "span", "dick")
 		verifyElem(elems[2], "span", "harry")
+
+		elems = doc.select("dude")
+		verifyEq(elems.size, 0)
 	}
 }
