@@ -1,8 +1,8 @@
 
 internal const class ErrMsgs {
 
-	static Str typeNotFound(Type type) {
-		"Could not find type ${type.qname}"
+	static Str selectorNotValid(Str selector) {
+		"CSS selector is not valid: ${selector}"
 	}
 	
 }

@@ -1,10 +1,27 @@
 Overview [#overview]
 ********************
-A CSS selector library.
+'Sizzle' is a library for querying XML documents by means of CSS selectors, and aims to be
+[CSS2.1]`http://www.w3.org/TR/CSS21/selector.html` compliant.
 
-http://www.w3.org/TR/CSS21/selector.html
+'Sizzle' currently supports:
 
-https://developer.mozilla.org/en-US/docs/CSS-2_Quick_Reference/Selectors
+ - The Universal selector - '*'
+ - Type selectors - 'div'
+ - ID selectors - '#id'
+ - Class selectors - '.heading'
+ - Descendant selectors - 'html div'
+ - Child selectors - 'html > div'
+ - Adjacent sibling selectors - 'div + p'
+
+'Sizzle' hopes to support attribute selectors and the ':first-child' pseudo-class soon.
+
+The following selectors can not / will not be supported:
+
+ - The link pseudo-classes ':link' and ':visited' can not be supported because they refer to a DOM model.
+ - The dynamic pseudo-classes ':hover', ':active', and ':focus' can not be supported because they require user input.
+ - The language pseudo-class ':lang' will not be supported because its usefulness is questionable.
+ - The Pseudo-elements ':first-line', ':first-letter', ':before', and ':after' can not be supported because they do not select XML elements.
+
 
 
 Install [#Install]
@@ -23,9 +40,40 @@ To use in a [Fantom]`http://fantom.org/` project, add a dependency to 'build.fan
 
 Quick Start [#quickStart]
 *************************
+1). Create a text file called 'Example.fan':
 pre>
-  Example here
+using afSizzle
+
+class Example {
+    Void main() {
+        xml   := """<html><p class="welcome">Hello from Sizzle!</p></html>"""
+        elems := Sizzle().selectFromStr(xml, "p.welcome")
+        echo(elems.first.text)  // -> Hello from Sizzle!
+    }
+}
 <pre
+
+2). Run 'Example.fan' as a Fantom script from the command line:
+pre>
+C:\> fan Example.fan
+Hello from Sizzle!
+<pre
+
+
+
+Usage [#usage]
+**************
+'Sizzle' usage is fairly simple and self explanatory; XML document in, XML elements out.
+
+`SizzleDoc` contains compiled and cached document information and is intended for re-use with multiple CSS selectors:
+
+    doc    := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
+    elems1 := doc.select("p.welcome")
+    elems2 := doc.select("html p")
+
+Currently, whitespace around child and sibling selectors is mandatory, meaning:
+  - 'div > p' is valid
+  - 'div>p' is NOT valid
 
 
 

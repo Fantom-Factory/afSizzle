@@ -2,14 +2,6 @@
 For 1.0.0
 =========
 
-Css2.1
-
-Descendant selectors 
-
-Child selectors >
-
-Adjacent sibling selectors +
-
 [att]
     Match when the element sets the "att" attribute, whatever the value of the attribute. 
 [att=val]
@@ -28,3 +20,5 @@ Adjacent sibling selectors +
 For Future
 ==========
 
+CSS3...? 
+http://www.w3.org/TR/css3-selectors/
