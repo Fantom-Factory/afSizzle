@@ -1,49 +1,56 @@
 using xml
 
+// TODO: Make SizzleDoc const - we shouldn't need to cache the single element buckets - which could be simplified anyway
+
+** Holds a representation of an XML document that may be queried with CSS selectors. 
+** 
+** 'SizzleDoc' is intended for re-use with multiple CSS selections:
+**
+**    doc    := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
+**    elems1 := doc.select("p.welcome")
+**    elems2 := doc.select("html p")
+** 
 class SizzleDoc {
+	
+	private static const Str	selectorStr		:= Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)?(?:\s*([>+]))? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]\<\+] |>.trim).replace("\\w2", Str<| [^#\s\[\]\<\+] |>.trim)
+	private static const Regex	selectorRegex	:= Regex.fromStr(selectorStr)
 	
 	private Str:DomBucket	buckets	:= Str:DomBucket[:] { caseInsensitive = true }
 	private XElem			root
-	private Str				rootPath
 	private DomBucket		rootBucket
-	
 	
 	private new make(XElem elem) {
 		this.root = elem
-		this.rootPath = pathTo(elem)
 		this.rootBucket = DomBucket(elem, true)
 	}
-	
+
+	** Create a 'SizzleDoc' from an XML string.
 	static new fromStr(Str xml) {
 		fromXDoc(XParser(xml.in).parseDoc)
 	}
 
+	** Create a 'SizzleDoc' from an XML document.
 	static new fromXDoc(XDoc doc) {
 		fromXElem(doc.root)
 	}
 
+	** Create a 'SizzleDoc' from an XML element.
 	static new fromXElem(XElem elem) {
 		SizzleDoc.make(elem)
 	}
-	
-	
-	
+
+	** Queries the xml document with the given CSS selector any returns any matching elements.
 	@Operator
-	XElem[] get(Str selector) {
-		// TODO: make static
-		s := Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)?(?:\s*([>+]))? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]\<\+] |>.trim).replace("\\w2", Str<| [^#\s\[\]\<\+] |>.trim)
-		regex	:= Regex.fromStr(s)
-		
-		matcher := regex.matcher(" " + selector)
+	XElem[] get(Str cssSelector) {
+		matcher := selectorRegex.matcher(" " + cssSelector)
 		
 		selectors := Selector[,]
 		while (matcher.find) {
 			selectors.add(Selector(matcher))
 		}		
 
-		// FIXME: better err msg
 		if (selectors.isEmpty)
-			throw Err("Shitty css selector: $selector")
+			throw SizzleErr(ErrMsgs.selectorNotValid(cssSelector))
 		
 		got := rootBucket.select(selectors.last)
 		
@@ -67,6 +74,11 @@ class SizzleDoc {
 		}
 		
 		return got
+	}
+	
+	** An alias for 'get()'
+	XElem[] select(Str selector) {
+		get(selector)
 	}
 	
 	private XNode? findElemMatch(XNode? elem, Selector selector) {
@@ -111,11 +123,6 @@ class SizzleDoc {
 		}
 		
 		return null
-	}
-	
-	** An alias for 'get()'
-	XElem[] select(Str selector) {
-		get(selector)
 	}
 	
 	internal static Str pathTo(XElem elem, StrBuf path := StrBuf()) {
@@ -168,7 +175,7 @@ internal class DomBucket {
 		if (recurse)
 			elem.elems.each { walk(it, recurse) }
 	}
-	
+
 	XElem[] select(Selector selector) {
 		types 	:= (selector.type == "*") ? typeBucket.all : typeBucket[selector.type]
 		gotten	:= types
@@ -182,7 +189,7 @@ internal class DomBucket {
 			css	:= classBucket[it]
 			gotten	= gotten.intersection(css)
 		}
-		
+
 		return gotten
 	}
 }

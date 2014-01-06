@@ -4,7 +4,7 @@ class Build : BuildPod {
 
 	new make() {
 		podName = "afSizzle"
-		summary = "A CSS selector library"
+		summary = "A library for querying XML documents by means of CSS selectors"
 		version = Version("0.0.1")
 
 		meta	= [	"org.name"		: "Alien-Factory",
@@ -20,7 +20,7 @@ class Build : BuildPod {
 					"xml 1.0"
 				]
 		
-		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`, `fan/internal/utils/`]
+		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`]
 		resDirs = [`doc/`]
 
 		docApi = true
