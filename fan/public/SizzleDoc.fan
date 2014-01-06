@@ -70,7 +70,7 @@ class SizzleDoc {
 	}
 	
 	private XNode? findElemMatch(XNode? elem, Selector selector) {
-		if (selector.type == SelectorType.descendant) {
+		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
 			while (isElement(elem)) {
 				bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
@@ -82,7 +82,7 @@ class SizzleDoc {
 			return null
 		}
 		
-		if (selector.type == SelectorType.child) {
+		if (selector.combinator == Combinator.child) {
 			elem = elem?.parent
 			if (!isElement(elem))
 				return null
@@ -93,7 +93,7 @@ class SizzleDoc {
 			return null
 		}
 
-		if (selector.type == SelectorType.sibling) {
+		if (selector.combinator == Combinator.sibling) {
 			parent := elem?.parent
 			if (!isElement(parent))
 				return null
@@ -110,7 +110,6 @@ class SizzleDoc {
 			return null
 		}
 		
-		// TODO
 		return null
 	}
 	
@@ -171,8 +170,8 @@ internal class DomBucket {
 	}
 	
 	XElem[] select(Selector selector) {
-		nmaes 	:= (selector.name == "*") ? typeBucket.all : typeBucket[selector.name]
-		gotten	:= nmaes
+		types 	:= (selector.type == "*") ? typeBucket.all : typeBucket[selector.type]
+		gotten	:= types
 		
 		if (!selector.id.isEmpty) {
 			ids 	:= attrBuckets["id"]?.get(selector.id)
@@ -208,39 +207,39 @@ internal class ElemBucket {
 
 internal const class Selector {
 	
-	const Str 	name
+	const Str 	type
 	const Str 	id
 	const Str[]	classes
 	const Str 	attrs
-	const SelectorType	type
+	const Combinator	combinator
 	
 	new make(RegexMatcher matcher) {
-		this.name 		= matcher.group(1) ?: "*"
+		this.type 		= matcher.group(1) ?: "*"
 		this.id 		= matcher.group(2)?.getRange(1..-1) ?: ""
 		this.classes	= matcher.group(3)?.split('.')?.exclude { it.isEmpty } ?: Str#.emptyList
 		this.attrs 		= matcher.group(4) ?: ""
-		this.type 		= SelectorType.fromSelector(matcher.group(5) ?: "")
+		this.combinator	= Combinator.fromCombinator(matcher.group(5) ?: "")
 	}
 	
 	override Str toStr() {
 		sId := id.isEmpty ? "" : "#${id}"
 		sClasses := classes.isEmpty ? "" : "." + classes.join(".") 
-		return "${name}${sId}${sClasses}"
+		return "${type}${sId}${sClasses}"
 	}
 }
 
-internal enum class SelectorType {
+internal enum class Combinator {
 	descendant	(""),
 	child		(">"),
 	sibling		("+");
 	
-	const Str selector;
+	const Str combinator;
 	
-	private new make(Str selector) {
-		this.selector = selector
+	private new make(Str combinator) {
+		this.combinator = combinator
 	}
 	
-	static SelectorType fromSelector(Str selector) {
-		SelectorType.vals.find { it.selector == selector } ?: throw Err("Selector '${selector}' not known")
+	static Combinator fromCombinator(Str combinator) {
+		Combinator.vals.find { it.combinator == combinator } ?: throw Err("Combinator '${combinator}' not known")
 	}
 }
