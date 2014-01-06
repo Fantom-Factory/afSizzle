@@ -75,28 +75,43 @@ class SizzleDoc {
 			while (isElement(elem)) {
 				bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
 				matches := bucket.select(selector)
-				if (matches.size > 1)
-					throw Err("WTF! Should have ONE or ZERO elements: ${matches}")
 				if (matches.size == 1)
 					return matches.first
 				elem = elem.parent
 			}
 			return null
 		}
+		
 		if (selector.type == SelectorType.child) {
-			elem = elem.parent
+			elem = elem?.parent
 			if (!isElement(elem))
 				return null
 			bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
 			matches := bucket.select(selector)
-			if (matches.size > 1)
-				throw Err("WTF! Should have ONE or ZERO elements: ${matches}")
 			if (matches.size == 1)
 				return matches.first
 			return null
 		}
+
+		if (selector.type == SelectorType.sibling) {
+			parent := elem?.parent
+			if (!isElement(parent))
+				return null
+			index := (parent as XElem).elems.indexSame(elem) - 1
+			if (index < 1)
+				return null
+			elem = (parent as XElem).elems.getSafe(index-1)
+			if (!isElement(elem))
+				return null			
+			bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
+			matches := bucket.select(selector)
+			if (matches.size == 1)
+				return matches.first
+			return null
+		}
+		
 		// TODO
-		return elem
+		return null
 	}
 	
 	** An alias for 'get()'
