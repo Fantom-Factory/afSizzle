@@ -22,3 +22,5 @@ For Future
 
 CSS3...? 
 http://www.w3.org/TR/css3-selectors/
+
+Parse selectors with Parboiled https://github.com/sirthias/parboiled/wiki (re-write in Fantom?)
