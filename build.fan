@@ -11,7 +11,7 @@ class Build : BuildPod {
 					"org.uri"		: "http://www.alienfactory.co.uk/",
 					"proj.name"		: "Sizzle",
 					"proj.uri"		: "http://www.fantomfactory.org/pods/afSizzle",
-					"vcs.uri"		: "https://bitbucket.org/Alien-Factory/afsizzle",
+					"vcs.uri"		: "https://bitbucket.org/AlienFactory/afsizzle",
 					"license.name"	: "BSD 2-Clause License",	
 					"repo.private"	: "true"
 				]
