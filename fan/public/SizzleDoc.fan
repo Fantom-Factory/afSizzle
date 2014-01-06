@@ -71,6 +71,7 @@ class SizzleDoc {
 	
 	private XNode? findElemMatch(XNode? elem, Selector selector) {
 		if (selector.type == SelectorType.descendant) {
+			elem = elem?.parent
 			while (isElement(elem)) {
 				bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
 				matches := bucket.select(selector)
@@ -80,6 +81,18 @@ class SizzleDoc {
 					return matches.first
 				elem = elem.parent
 			}
+			return null
+		}
+		if (selector.type == SelectorType.child) {
+			elem = elem.parent
+			if (!isElement(elem))
+				return null
+			bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
+			matches := bucket.select(selector)
+			if (matches.size > 1)
+				throw Err("WTF! Should have ONE or ZERO elements: ${matches}")
+			if (matches.size == 1)
+				return matches.first
 			return null
 		}
 		// TODO
