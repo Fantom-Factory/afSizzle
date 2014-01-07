@@ -1,7 +1,6 @@
 Overview [#overview]
 ********************
-'Sizzle' is a library for querying XML documents by means of CSS selectors, and aims to be
-[CSS2.1]`http://www.w3.org/TR/CSS21/selector.html` compliant.
+'Sizzle' is a library for querying XML documents by means of [CSS 2.1]`http://www.w3.org/TR/CSS21/selector.html` selectors.
 
 'Sizzle' currently supports:
 
@@ -12,14 +11,18 @@ Overview [#overview]
  - Descendant selectors - 'html div'
  - Child selectors - 'html > div'
  - Adjacent sibling selectors - 'div + p'
+ - Any value attribute selector - '[att]'
+ - Exact value attribute selector - '[att=val]'
+ - Whitespace value attribute selector - '[att~=val]'
+ - Language value attribute selector - '[att|=val]'
 
-'Sizzle' hopes to support attribute selectors and the ':first-child' pseudo-class soon.
+'Sizzle' hopes to the ':first-child' pseudo-class soon.
 
 The following selectors can not / will not be supported:
 
  - The link pseudo-classes ':link' and ':visited' can not be supported because they refer to a DOM model.
  - The dynamic pseudo-classes ':hover', ':active', and ':focus' can not be supported because they require user input.
- - The language pseudo-class ':lang' will not be supported because its usefulness is questionable.
+ - The language pseudo-class ':lang(xxx)' will not be supported because its usefulness is questionable.
  - The Pseudo-elements ':first-line', ':first-letter', ':before', and ':after' can not be supported because they do not select XML elements.
 
 Note: 'Sizzle' has no association with [Sizzle - The JavaScript CSS Selector Engine]`http://sizzlejs.com/` as used by
@@ -73,8 +76,10 @@ Usage [#usage]
     elems2 := doc.select("html p")
 
 Currently, whitespace around child and sibling selectors is mandatory, meaning:
-  - 'div > p' is valid
+  - 'div > p' is valid, and
   - 'div>p' is NOT valid
+
+Have fun!
 
 
 

@@ -1,8 +1,9 @@
+using xml
 
 ** Test Str:
 ** attr1[wot] attr2[wot=ever] attr3[wot~=ever] attr4[wot|=ever] attr5[wot~="ever"] attr6[wot|='ever']
 internal const class Selector {
-	private static const Str 	attrStr 	:= Str<|\[(\w+)(?:([\~|])?=[\'\"]?([^\]\'\"]+)[\'\"]?)?\]|>.replace("\\w", Str<| [^#\.\s\[\]\<\+\~|] |>.trim)
+	private static const Str 	attrStr 	:= Str<|\[(\w+)(?:([\~|])?=[\'\"]?([^\]\'\"]+)[\'\"]?)?\]|>.replace("\\w", Str<| [^#\.\s\[\]\<\+\~|=] |>.trim)
 	private static const Regex 	attrRegex	:= Regex.fromStr(attrStr)
 	
 	const Str 	type
@@ -24,6 +25,10 @@ internal const class Selector {
 		this.classes	= matcher.group(3)?.split('.')?.exclude { it.isEmpty } ?: Str#.emptyList
 		this.combinator	= Combinator.fromCombinator(matcher.group(5) ?: "")
 		this.attrSelectors = selectors
+		
+		// if this selector has nothing to match - ensure it doesn't match everything!
+		if (this.attrSelectors.isEmpty && this.type == "*" && this.id.isEmpty && this.classes.isEmpty)
+			this.type = ""
 	}
 	
 	override Str toStr() {
@@ -42,6 +47,50 @@ internal const class AttrSelector {
 		this.name 	= matcher.group(1)
 		this.type 	= matcher.group(2)
 		this.value	= matcher.group(3)
+	}
+
+	XElem[] match(Str:ElemBucket buckets) {
+		if (isAny) {
+			return buckets[name]?.all ?: XElem#.emptyList
+		}
+		if (isExact) {
+			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
+				key == value
+			}?.vals?.flatten ?: XElem#.emptyList
+		}
+		if (isWhitespace) {
+			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
+				key.split.contains(value)
+			}?.vals?.flatten ?: XElem#.emptyList
+		}
+		if (isLang) {
+			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
+				key == value || key.startsWith("${value}-")
+			}?.vals?.flatten ?: XElem#.emptyList
+		}
+
+		throw Err("WTF is a ${toStr}?")
+	}
+	
+	Bool isAny() {
+		value == null && type == null
+	}
+
+	Bool isExact() {
+		value != null && type == null
+	}
+
+	Bool isWhitespace() {
+		value != null && type == "~"
+	}
+
+	Bool isLang() {
+		value != null && type == "|"
+	}
+	
+	override Str toStr() {
+		eq	:= value != null ? (type ?: "") + "=${value}" : ""
+		return "[${name}${eq}]"
 	}
 }
 
