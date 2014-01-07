@@ -22,17 +22,18 @@ The following selectors can not / will not be supported:
  - The language pseudo-class ':lang' will not be supported because its usefulness is questionable.
  - The Pseudo-elements ':first-line', ':first-letter', ':before', and ':after' can not be supported because they do not select XML elements.
 
+Note: 'Sizzle' has no association with [Sizzle - The JavaScript CSS Selector Engine]`http://sizzlejs.com/` as used by
+[JQuery]`http://jquery.com/`. Well, except for the name of course!
+
 
 
 Install [#Install]
 ******************
-Install 'Sizzle' with the Fantom Respository Manager ( [fanr]`http://fantom.org/doc/docFanr/Tool.html#install` ):
+Install 'Sizzle' with the [Fantom Respository Manager]`http://fantom.org/doc/docFanr/Tool.html#install`:
 
-  $ fanr install -r http://repo.status302.com/fanr/ afSizzle
+  C:\> fanr install -r http://repo.status302.com/fanr/ afSizzle
 
-Or to install manually, download the pod from [Status302]`http://repo.status302.com/browse/afSizzle` and copy it to '%FAN_HOME%/lib/fan/'.
-
-To use in a [Fantom]`http://fantom.org/` project, add a dependency to 'build.fan':
+Add a dependency to 'build.fan' to use in a Fantom project:
 
   depends = ["sys 1.0", ..., "afSizzle 0+"]
 
