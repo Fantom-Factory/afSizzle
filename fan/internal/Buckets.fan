@@ -37,7 +37,12 @@ internal class DomBucket {
 
 		selector.classes.each {
 			css	:= classBucket[it]
-			gotten	= gotten.intersection(css)
+			gotten = gotten.intersection(css)
+		}
+
+		selector.attrSelectors.each {
+			attrs := it.match(attrBuckets)
+			gotten = gotten.intersection(attrs)
 		}
 
 		return gotten
