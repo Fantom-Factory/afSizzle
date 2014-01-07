@@ -1,6 +1,6 @@
 # Sizzle
 
-`Sizzle` is a [Fantom](http://fantom.org/) library for querying XML documents by means of CSS selectors, and aims to be [CSS2.1](http://www.w3.org/TR/CSS21/selector.html) compliant.
+`Sizzle` is a [Fantom](http://fantom.org/) library for querying XML documents by means of [CSS 2.1](http://www.w3.org/TR/CSS21/selector.html) selectors.
 
 `Sizzle` currently supports:
 
@@ -11,9 +11,11 @@
  - Descendant selectors - `html div`
  - Child selectors - `html > div`
  - Adjacent sibling selectors - `div + p`
-
-`Sizzle` hopes to support attribute selectors and the `:first-child` pseudo-class soon.
-
+ - Any value attribute selector - `[att]`
+ - Exact value attribute selector - `[att=val]`
+ - Whitespace value attribute selector - `[att~=val]`
+ - Language value attribute selector - `[att|=val]`
+ 
 
 
 ## Install

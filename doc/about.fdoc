@@ -1,13 +1,16 @@
-'Sizzle' is a library for querying XML documents by means of CSS selectors, and aims to be
-[CSS2.1]`http://www.w3.org/TR/CSS21/selector.html` compliant.
+'Sizzle' is a library for querying XML documents by means of [CSS 2.1]`http://www.w3.org/TR/CSS21/selector.html` selectors.
 
 'Sizzle' currently supports:
 
  - The Universal selector - '*'
  - Type selectors - 'div'
+ - ID selectors - '#id'
+ - Class selectors - '.heading'
  - Descendant selectors - 'html div'
  - Child selectors - 'html > div'
  - Adjacent sibling selectors - 'div + p'
- - Class selectors - '.heading'
- - ID selectors - '#id'
+ - Any value attribute selectors - '[att]'
+ - Exact value attribute selectors - '[att=val]'
+ - Whitespace value attribute selectors - '[att~=val]'
+ - Language value attribute selectors - '[att|=val]'
  
