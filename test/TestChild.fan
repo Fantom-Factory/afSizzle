@@ -12,6 +12,12 @@ internal class TestChild : SizzleTest {
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "span", "tom")
 
+		elems = doc.select("html > p > span")
+		verifyEq(elems.size, 3)
+		verifyElem(elems[0], "span", "tom")
+		verifyElem(elems[1], "span", "dick")
+		verifyElem(elems[2], "span", "harry")
+
 		elems = doc.select("html > p > .dick")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "span", "dick")
