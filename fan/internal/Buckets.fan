@@ -12,7 +12,7 @@ internal class DomBucket {
 	
 	private Void walk(XElem elem, Bool recurse) {
 		typeBucket[elem.name] = elem
-		
+
 		elem.attr("class", false)?.val?.split?.each {
 			classBucket[it] = elem
 		}

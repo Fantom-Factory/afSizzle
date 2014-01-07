@@ -120,13 +120,6 @@ class SizzleDoc {
 		path.add(name)
 		return path.toStr
 	}
-
-//	internal static XElem[] path(XElem elem, XElem[] elemPath := XElem[,]) {
-//		if (isElement(elem.parent)) {
-//			path(elem.parent, elemPath)
-//		}
-//		return elemPath.add(elem)
-//	}
 	
 	private static Bool isElement(XNode? node) {
 		(node as XElem) != null
