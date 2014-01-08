@@ -42,12 +42,13 @@ class SizzleDoc {
 	** Queries the xml document with the given CSS selector any returns any matching elements.
 	@Operator
 	XElem[] get(Str cssSelector) {
-		matcher := selectorRegex.matcher(" " + cssSelector)
+		// CASE-INSENSITIVITY
+		matcher := selectorRegex.matcher(" " + cssSelector.lower)
 		
 		selectors := Selector[,]
 		while (matcher.find) {
 			selectors.add(Selector(matcher))
-		}		
+		}
 
 		if (selectors.isEmpty)
 			throw SizzleErr(ErrMsgs.selectorNotValid(cssSelector))
@@ -90,10 +91,10 @@ class SizzleDoc {
 			parent := elem?.parent
 			if (!isElement(parent))
 				return null
-			index := (parent as XElem).elems.indexSame(elem) - 1
+			index := (parent as XElem).elems.indexSame(elem)
 			if (index < 1)
 				return null
-			elem = (parent as XElem).elems.getSafe(index-1)
+			elem = (parent as XElem).elems.getSafe(index - 1)
 			return matches(elem, selector) ? elem : null
 		}
 		

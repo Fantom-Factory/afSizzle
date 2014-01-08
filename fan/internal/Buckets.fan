@@ -4,7 +4,7 @@ internal class DomBucket {
 	
 	ElemBucket 		typeBucket	:= ElemBucket() 
 	ElemBucket 		classBucket	:= ElemBucket() 
-	Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] { caseInsensitive = true }
+	Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] // { caseInsensitive = true } - done through .lower
 	
 	new make(XElem elem, Bool recurse) {
 		walk(elem, recurse)
@@ -18,7 +18,8 @@ internal class DomBucket {
 		}
 
 		elem.attrs.each {
-			bucket := attrBuckets.getOrAdd(it.name) { ElemBucket() }
+			// CASE-INSENSITIVITY
+			bucket := attrBuckets.getOrAdd(it.name.lower) { ElemBucket() }
 			bucket[it.val.trim] = elem
 		}
 		
@@ -59,7 +60,8 @@ internal class ElemBucket {
 
 	@Operator
 	Void set(Str name, XElem elem) {
-		elems.getOrAdd(name) { XElem[,] }.add(elem)
+		// CASE-INSENSITIVITY
+		elems.getOrAdd(name.lower) { XElem[,] }.add(elem)
 	}
 	
 	once XElem[] all() {

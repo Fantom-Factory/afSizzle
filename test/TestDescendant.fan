@@ -18,6 +18,12 @@ internal class TestDescendant : SizzleTest {
 
 		elems = doc.select("html p .tom .dick")
 		verifyEq(elems.size, 0)
+		
+		// case insensitivity test
+		doc = SizzleDoc("""<Html><Head1 class="head1">names</Head1><p><span class="name tom">tom</span><span class="name dick">dick</span><span>harry</span></p></Html>""")
+		elems = doc.select("HTML HEAD1")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "Head1", "names")
 	}
 
 	Void testDescendantMultiple() {

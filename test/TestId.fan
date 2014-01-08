@@ -15,5 +15,11 @@ internal class TestId : SizzleTest {
 
 		elems = doc.select("#dude")
 		verifyEq(elems.size, 0)
+		
+		// case insensitivity test
+		doc = SizzleDoc("""<html><h1 id="Head1">names</h1><p><span id="name">tom</span><span id="name">dick</span><span>harry</span></p></html>""")
+		elems = doc.select("#HEAD1")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "h1", "names")
 	}
 }
