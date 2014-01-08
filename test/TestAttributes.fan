@@ -23,6 +23,12 @@ internal class TestAttributes : SizzleTest {
 		elems = doc.select("html [head]")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")
+
+		// case insensitivity test
+		doc = SizzleDoc("""<html><h1 HeaD="wotever">names</h1><p><span class="name tom" body="">tom</span><span class="name dick">dick</span><span>harry</span></p></html>""")
+		elems = doc.select("[HEAD]")	
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "h1", "names")
 	}
 
 	Void testAttrExact() {
@@ -44,6 +50,12 @@ internal class TestAttributes : SizzleTest {
 		verifyEq(elems.size, 0)
 		
 		elems = doc.select("html [head=wotever]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "h1", "names")
+
+		// case insensitivity test
+		doc = SizzleDoc("""<html><h1 Head="Wotever">names</h1><p><span class="name tom">tom</span><span class="name dick">dick</span><span>harry</span></p></html>""")
+		elems = doc.select("[HEAD=WOTEVER]")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")
 	}
@@ -95,6 +107,12 @@ internal class TestAttributes : SizzleTest {
 		elems = doc.select("html [head~=wotever]")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")
+
+		// case insensitivity test
+		doc = SizzleDoc("""<html><h1 Head="Wotever">names</h1><p><span class="name tom">tom</span><span class="name dick">dick</span><span>harry</span></p></html>""")
+		elems = doc.select("[HEAD~=WOTEVER]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "h1", "names")
 	}
 
 	Void testAttrLang() {
@@ -122,6 +140,12 @@ internal class TestAttributes : SizzleTest {
 		elems = doc.select("html [head|=fr]")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")		
+
+		// case insensitivity test
+		doc = SizzleDoc("""<html><h1 Head="Fr">names</h1><p><span lang="en-gb">tom</span><span lang="en-cockney">dick</span><span lang="encore">harry</span></p></html>""")
+		elems = doc.select("[HEAD|=FR]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "h1", "names")
 	}
 }
 

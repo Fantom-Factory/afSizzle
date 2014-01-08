@@ -20,15 +20,18 @@ internal const class Selector {
 			selectors.add(AttrSelector(attrMatcher))
 		}
 		
-		this.type 		= matcher.group(1) ?: "*"
+		this.type 		= matcher.group(1) ?: ""
 		this.id 		= matcher.group(2)?.getRange(1..-1) ?: ""
 		this.classes	= matcher.group(3)?.split('.')?.exclude { it.isEmpty } ?: Str#.emptyList
 		this.combinator	= Combinator.fromCombinator(matcher.group(5) ?: "")
 		this.attrSelectors = selectors
 		
 		// if this selector has nothing to match - ensure it doesn't match everything!
-		if (this.attrSelectors.isEmpty && this.type == "*" && this.id.isEmpty && this.classes.isEmpty)
+		if (this.attrSelectors.isEmpty && this.type.isEmpty && this.id.isEmpty && this.classes.isEmpty)
 			this.type = ""
+		else
+			if (type.isEmpty)
+				this.type = "*"
 	}
 	
 	override Str toStr() {
