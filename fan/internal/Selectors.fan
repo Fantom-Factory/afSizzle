@@ -52,7 +52,7 @@ internal const class AttrSelector {
 		this.value	= matcher.group(3)
 	}
 
-	XElem[] match(Str:ElemBucket buckets) {
+	XElem[] matchMultiNode(Str:ElemBucket buckets) {
 		if (isAny) {
 			return buckets[name]?.all ?: XElem#.emptyList
 		}
@@ -71,7 +71,22 @@ internal const class AttrSelector {
 				key == value || key.startsWith("${value}-")
 			}?.vals?.flatten ?: XElem#.emptyList
 		}
+		throw Err("WTF is a ${toStr}?")
+	}
 
+	Bool matchSingleNode(Str:Str attrs) {
+		if (isAny) {
+			return attrs.containsKey(name)
+		}
+		if (isExact) {
+			return attrs[name] == value
+		}
+		if (isWhitespace) {
+			return attrs[name]?.split?.contains(value) ?: false
+		}
+		if (isLang) {
+			return attrs[name] == value || attrs[name].startsWith("${value}-") 
+		}
 		throw Err("WTF is a ${toStr}?")
 	}
 	

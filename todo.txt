@@ -12,6 +12,7 @@ make fast, do single bucket code - make SizzleDoc const
 
 For Future
 ==========
+Make case insensitivity optional - see "CASE-INSENSITIVITY"
 
 CSS3...? 
 http://www.w3.org/TR/css3-selectors/

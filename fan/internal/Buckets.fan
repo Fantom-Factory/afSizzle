@@ -1,6 +1,6 @@
 using xml
 
-internal class DomBucket {
+internal class NodeBucketMulti {
 	
 	ElemBucket 		typeBucket	:= ElemBucket() 
 	ElemBucket 		classBucket	:= ElemBucket() 
@@ -32,6 +32,7 @@ internal class DomBucket {
 		gotten	:= types
 		
 		if (!selector.id.isEmpty) {
+			// CASE-INSENSITIVITY - the "id"
 			ids 	:= attrBuckets["id"]?.get(selector.id)
 			gotten	= gotten.intersection(ids)
 		}
@@ -42,7 +43,7 @@ internal class DomBucket {
 		}
 
 		selector.attrSelectors.each {
-			attrs := it.match(attrBuckets)
+			attrs := it.matchMultiNode(attrBuckets)
 			gotten = gotten.intersection(attrs)
 		}
 
@@ -66,5 +67,45 @@ internal class ElemBucket {
 	
 	once XElem[] all() {
 		elems.vals.flatten.unique
+	}
+}
+
+internal class NodeBucketSingle {
+	
+	XElem	theElement
+	Str 	elemType
+	Str[]	elemClasses
+	Str:Str	elemAttrs	:= [Str:Str][:]	// { caseInsensitive = true } - done through .lower
+	
+	new make(XElem elem) {
+		theElement	= elem
+		// CASE-INSENSITIVITY
+		elemType	= elem.name.lower
+		// CASE-INSENSITIVITY
+		elemClasses	= elem.attr("class", false)?.val?.lower?.split ?: Str#.emptyList 
+
+		elem.attrs.each {
+			// CASE-INSENSITIVITY
+			elemAttrs[it.name.lower] = it.val.trim
+		}
+	}
+
+	XElem? select(Selector selector) {
+		match	:= (selector.type == "*") || (selector.type == elemType)
+		
+		if (!selector.id.isEmpty) {
+			// CASE-INSENSITIVITY - the "id"
+			match	= match && selector.id == elemAttrs["id"]
+		}
+
+		selector.classes.each {
+			match	= match && elemClasses.contains(it)
+		}
+
+		selector.attrSelectors.each {
+			match	= match && it.matchSingleNode(elemAttrs)
+		}
+
+		return match ? theElement : null
 	}
 }
