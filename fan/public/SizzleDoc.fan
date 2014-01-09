@@ -4,14 +4,12 @@ using xml
 ** 
 ** 'SizzleDoc' is intended for re-use with multiple CSS selections:
 **
-**    doc    := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
-**    elems1 := doc.select("p.welcome")
-**    elems2 := doc.select("html p")
+**    sizzDoc := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
+**    elems1  := sizzDoc.select("p.welcome")
+**    elems2  := sizzDoc.select("html p")
 ** 
-class SizzleDoc {
-	
-	private static const Str	selectorStr		:= Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)?(?:\s*([>+]))? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]\<\+] |>.trim).replace("\\w2", Str<| [^#\s\[\]\<\+] |>.trim)
-	private static const Regex	selectorRegex	:= Regex.fromStr(selectorStr)
+class SizzleDoc {	
+	private static const Regex	selectorRegex	:= theMainSelector
 	
 	private Str:NodeBucketMulti	buckets	:= Str:NodeBucketMulti[:] { caseInsensitive = true }
 	private XElem				root
@@ -22,6 +20,19 @@ class SizzleDoc {
 		this.rootBucket = NodeBucketMulti(elem, true)
 	}
 
+	private static Regex theMainSelector() {
+		Str nonWord1		:= Str<| [^,#<+:\s\[\]\(\)\\\.]	|>.trim
+		Str nonWord2		:= Str<| [^,#<+:\s\[\]\(\)\\]	|>.trim
+		
+		Str	typeSelector	:= Str<| (\w+)? 				|>.trim.replace("\\w", nonWord1)
+		Str	idSelector		:= Str<| (?:#(\w+))?			|>.trim.replace("\\w", nonWord1)
+		Str	classesSelector	:= Str<| (\.[\w\.]+)?			|>.trim.replace("\\w", nonWord2)
+		Str	attrSelector	:= Str<| ((?:\[[^\]]+\])+)?(?:\s*([>+]))?		|>.trim
+		Str	pseudoSelector	:= Str<| (?::(first-child|lang)(?:\((\w)+\))?)?	|>.trim
+		
+		return Regex.fromStr("\\s+${typeSelector}${idSelector}${classesSelector}${attrSelector}${pseudoSelector}")
+	}
+	
 	** Create a 'SizzleDoc' from an XML string.
 	static new fromStr(Str xml) {
 		fromXDoc(XParser(xml.in).parseDoc)
@@ -52,7 +63,6 @@ class SizzleDoc {
 				if (!leftovers.isEmpty)
 					throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))			
 			}
-		
 		
 		// CASE-INSENSITIVITY
 		matcher := selectorRegex.matcher(cssSelectorStr)

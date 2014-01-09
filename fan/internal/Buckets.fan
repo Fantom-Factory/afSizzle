@@ -47,6 +47,8 @@ internal class NodeBucketMulti {
 			gotten = gotten.intersection(attrs)
 		}
 
+		gotten = gotten.findAll { selector.pseudoSelector.matches(it) }
+		
 		return gotten
 	}
 }
