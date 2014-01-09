@@ -1,12 +1,9 @@
 
 For 1.0.0
 =========
-
-test & ensure case insensitive
-
-make fast, do single bucket code - make SizzleDoc const
-
 5.11.1 :first-child pseudo-class
+
+Maybe the :lang(xxx) selector???
 
 
 
