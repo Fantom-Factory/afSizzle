@@ -11,7 +11,8 @@ For Future
 ==========
 Make case insensitivity optional - see "CASE-INSENSITIVITY"
 
-CSS3...? 
-http://www.w3.org/TR/css3-selectors/
+allow multiple pseudo selectors
 
-Parse selectors with Parboiled https://github.com/sirthias/parboiled/wiki (re-write in Fantom?)
+CSS3...? 
+ - http://www.w3.org/TR/css3-selectors/
+ - Parse selectors with Parboiled https://github.com/sirthias/parboiled/wiki (re-write in Fantom?)

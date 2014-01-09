@@ -140,18 +140,30 @@ internal const class PseudoSelector {
 	}
 	
 	Bool active() {
-		name != null
+		if (name == "lang")
+			return value != null
+		return name != null 
 	}
 	
 	Bool matches(XElem elem) {
 		if (!active)
 			return true
 		if (name == "first-child") {
-			p:= (elem.parent as XElem)
-			pc := p?.elems
-			p1 := pc?.first
-			return p1 == elem
+			return (elem.parent as XElem)?.elems?.first == elem
+		}
+		if (name == "lang") {
+			lang := findLang(elem)
+			Env.cur.err.printLine(value+lang)
+			return lang == value || (lang?.startsWith("${value}-") ?: false)
 		}
 		throw Err("WTF is a '$name($value)' pseudo selector?")
+	}
+	
+	private Str? findLang(XNode? elem) {
+		if (elem == null)
+			return null
+		// CASE-INSENSITIVITY
+		lang := (elem as XElem)?.attrs?.find { it.name.equalsIgnoreCase("lang") || it.name.equalsIgnoreCase("xml:lang") }?.val
+		return (lang != null) ? lang.lower : findLang(elem.parent)
 	}
 }

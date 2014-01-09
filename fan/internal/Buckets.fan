@@ -93,21 +93,25 @@ internal class NodeBucketSingle {
 	}
 
 	XElem? select(Selector selector) {
-		match	:= (selector.type == "*") || (selector.type == elemType)
+		match := (selector.type == "*") || (selector.type == elemType)
 		
 		if (!selector.id.isEmpty) {
 			// CASE-INSENSITIVITY - the "id"
-			match	= match && selector.id == elemAttrs["id"]
+			match = match && selector.id == elemAttrs["id"]
 		}
 
 		selector.classes.each {
-			match	= match && elemClasses.contains(it)
+			match = match && elemClasses.contains(it)
 		}
 
 		selector.attrSelectors.each {
-			match	= match && it.matchSingleNode(elemAttrs)
+			match = match && it.matchSingleNode(elemAttrs)
 		}
 
+		if (selector.pseudoSelector.active) {
+			match = match && selector.pseudoSelector.matches(theElement)
+		}
+		
 		return match ? theElement : null
 	}
 }

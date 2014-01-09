@@ -23,13 +23,13 @@ class SizzleDoc {
 	private static Regex theMainSelector() {
 		Str nonWord1		:= Str<| [^,#<+:\s\[\]\(\)\\\.]	|>.trim
 		Str nonWord2		:= Str<| [^,#<+:\s\[\]\(\)\\]	|>.trim
-		
+
 		Str	typeSelector	:= Str<| (\w+)? 				|>.trim.replace("\\w", nonWord1)
 		Str	idSelector		:= Str<| (?:#(\w+))?			|>.trim.replace("\\w", nonWord1)
 		Str	classesSelector	:= Str<| (\.[\w\.]+)?			|>.trim.replace("\\w", nonWord2)
 		Str	attrSelector	:= Str<| ((?:\[[^\]]+\])+)?(?:\s*([>+]))?		|>.trim
-		Str	pseudoSelector	:= Str<| (?::(first-child|lang)(?:\((\w)+\))?)?	|>.trim
-		
+		Str	pseudoSelector	:= Str<| (?::(first-child|lang)(?:\((\w+)\))?)?	|>.trim
+
 		return Regex.fromStr("\\s+${typeSelector}${idSelector}${classesSelector}${attrSelector}${pseudoSelector}")
 	}
 	
@@ -57,14 +57,14 @@ class SizzleDoc {
 	** 
 	** Throws 'ParseErr' should the CSS selector by invalid and 'checked' is 'true' (else an empty list is returned). 
 	XElem[] select(Str cssSelector, Bool checked := true) {
+		// CASE-INSENSITIVITY
 		cssSelectorStr := " " + cssSelector.lower
 		if (checked)
 			selectorRegex.split(cssSelectorStr, 1000).each |leftovers| {
 				if (!leftovers.isEmpty)
 					throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))			
 			}
-		
-		// CASE-INSENSITIVITY
+
 		matcher := selectorRegex.matcher(cssSelectorStr)
 		
 		selectors := Selector[,]
@@ -82,7 +82,7 @@ class SizzleDoc {
 
 		survivors := possibles.findAll |XNode? elem -> Bool| {
 			selectors[0..<-1].reverse.all |sel -> Bool| {
-				elem = findElemMatch(elem, sel)
+				elem = findMatch(elem, sel)
 				return elem != null
 			}
 		}
@@ -96,7 +96,7 @@ class SizzleDoc {
 		select(cssSelector, checked)
 	}
 	
-	private XElem? findElemMatch(XNode? elem, Selector selector) {
+	private XElem? findMatch(XNode? elem, Selector selector) {
 		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
 			while (isElement(elem) && matches(elem, selector) == null) {
