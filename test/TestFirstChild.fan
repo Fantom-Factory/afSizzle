@@ -2,18 +2,18 @@
 internal class TestFirstChild : SizzleTest {
 	
 	Void testFirstChild() {
-		doc := SizzleDoc("""<html><h1>names</h1><p><span class="name tom">tom<div/></span><span class="name dick">dick</span><span>harry</span></p></html>""")
+		doc := SizzleDoc("""<html><h1>names</h1><p><span class="name tom">tom<div>1-tom</div></span><span class="name dick">dick<div>1-dick</div></span><span>harry</span></p></html>""")
 		
 		elems := doc.select("html h1:first-child")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")
 
 		elems = doc.select(":first-child")
-		Env.cur.err.printLine(elems)
-		verifyEq(elems.size, 3)
-		verifyElem(elems[0], "div", null)
-		verifyElem(elems[1], "h1", "names")
-		verifyElem(elems[2], "span", "tom")
+		verifyEq(elems.size, 4)
+		verifyElem(elems[0], "div", "1-tom")
+		verifyElem(elems[1], "div", "1-dick")
+		verifyElem(elems[2], "h1", "names")
+		verifyElem(elems[3], "span", "tom")
 
 		elems = doc.select("p .tom:first-child")
 		verifyEq(elems.size, 1)
@@ -25,7 +25,7 @@ internal class TestFirstChild : SizzleTest {
 
 		elems = doc.select("span:first-child div")	// test single node match
 		verifyEq(elems.size, 1)
-		verifyElem(elems[0], "div", null)
+		verifyElem(elems[0], "div", "1-tom")
 
 		elems = doc.select("html .dick:first-child")
 		verifyEq(elems.size, 0)

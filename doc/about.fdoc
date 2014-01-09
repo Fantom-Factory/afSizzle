@@ -13,4 +13,4 @@
  - Exact value attribute selectors - '[att=val]'
  - Whitespace value attribute selectors - '[att~=val]'
  - Language value attribute selectors - '[att|=val]'
- 
+ - The pseudo-class ':first-child'
