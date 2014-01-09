@@ -10,6 +10,7 @@ internal const class Selector {
 	const Str 	id
 	const Str[]	classes
 	const AttrSelector[] 	attrSelectors
+	const PseudoSelector	pseudoSelector
 	const Combinator		combinator
 
 	new make(RegexMatcher matcher) {
@@ -21,13 +22,14 @@ internal const class Selector {
 		}
 		
 		this.type 		= matcher.group(1) ?: ""
-		this.id 		= matcher.group(2)?.getRange(1..-1) ?: ""
+		this.id 		= matcher.group(2) ?: ""
 		this.classes	= matcher.group(3)?.split('.')?.exclude { it.isEmpty } ?: Str#.emptyList
 		this.combinator	= Combinator.fromCombinator(matcher.group(5) ?: "")
-		this.attrSelectors = selectors
-		
+		this.attrSelectors 	= selectors
+		this.pseudoSelector	= PseudoSelector(matcher) 
+
 		// if this selector has nothing to match - ensure it doesn't match everything!
-		if (this.attrSelectors.isEmpty && this.type.isEmpty && this.id.isEmpty && this.classes.isEmpty)
+		if (this.attrSelectors.isEmpty && this.type.isEmpty && this.id.isEmpty && this.classes.isEmpty && !pseudoSelector.active)
 			this.type = ""
 		else
 			if (type.isEmpty)
@@ -125,5 +127,31 @@ internal enum class Combinator {
 	
 	static Combinator fromCombinator(Str combinator) {
 		Combinator.vals.find { it.combinator == combinator } ?: throw Err("Combinator '${combinator}' not known")
+	}
+}
+
+internal const class PseudoSelector {
+	const Str? 	name
+	const Str?	value
+
+	new make(RegexMatcher matcher) {
+		this.name 	= matcher.group(6)
+		this.value 	= matcher.group(7)
+	}
+	
+	Bool active() {
+		name != null
+	}
+	
+	Bool matches(XElem elem) {
+		if (!active)
+			return true
+		if (name == "first-child") {
+			p:= (elem.parent as XElem)
+			pc := p?.elems
+			p1 := pc?.first
+			return p1 == elem
+		}
+		throw Err("WTF is a '$name($value)' pseudo selector?")
 	}
 }
