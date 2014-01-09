@@ -43,9 +43,19 @@ class SizzleDoc {
 	}
 	
 	** Queries the xml document with the given CSS selector any returns any matching elements.
-	XElem[] select(Str cssSelector) {
+	** 
+	** Throws 'ParseErr' should the CSS selector by invalid and 'checked' is 'true' (else an empty list is returned). 
+	XElem[] select(Str cssSelector, Bool checked := true) {
+		cssSelectorStr := " " + cssSelector.lower
+		if (checked)
+			selectorRegex.split(cssSelectorStr, 1000).each |leftovers| {
+				if (!leftovers.isEmpty)
+					throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))			
+			}
+		
+		
 		// CASE-INSENSITIVITY
-		matcher := selectorRegex.matcher(" " + cssSelector.lower)
+		matcher := selectorRegex.matcher(cssSelectorStr)
 		
 		selectors := Selector[,]
 		while (matcher.find) {
@@ -53,7 +63,7 @@ class SizzleDoc {
 		}
 
 		if (selectors.isEmpty)
-			throw SizzleErr(ErrMsgs.selectorNotValid(cssSelector))
+			return !checked ? XElem#.emptyList : throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))
 		
 		possibles := rootBucket.select(selectors.last)
 		
@@ -70,10 +80,10 @@ class SizzleDoc {
 		return survivors
 	}
 	
-	** An alias for 'get()'
+	** An alias for 'select()'
 	@Operator
-	XElem[] get(Str cssSelector) {
-		select(cssSelector)
+	XElem[] get(Str cssSelector, Bool checked := true) {
+		select(cssSelector, checked)
 	}
 	
 	private XElem? findElemMatch(XNode? elem, Selector selector) {
