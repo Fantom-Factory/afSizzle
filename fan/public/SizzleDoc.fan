@@ -1,7 +1,5 @@
 using xml
 
-// TODO: Make SizzleDoc const - we shouldn't need to cache the single element buckets - which could be simplified anyway
-
 ** Holds a representation of an XML document that may be queried with CSS selectors. 
 ** 
 ** 'SizzleDoc' is intended for re-use with multiple CSS selections:
@@ -15,13 +13,13 @@ class SizzleDoc {
 	private static const Str	selectorStr		:= Str<| \s+(\w1+)?(#\w1+)?(\.[\w2\.]+)?((?:\[[^\]]+\])+)?(?:\s*([>+]))? |>.trim.replace("\\w1", Str<| [^#\.\s\[\]\<\+] |>.trim).replace("\\w2", Str<| [^#\s\[\]\<\+] |>.trim)
 	private static const Regex	selectorRegex	:= Regex.fromStr(selectorStr)
 	
-	private Str:DomBucket	buckets	:= Str:DomBucket[:] { caseInsensitive = true }
-	private XElem			root
-	private DomBucket		rootBucket
+	private Str:NodeBucketMulti	buckets	:= Str:NodeBucketMulti[:] { caseInsensitive = true }
+	private XElem				root
+	private NodeBucketMulti		rootBucket
 	
 	private new make(XElem elem) {
 		this.root = elem
-		this.rootBucket = DomBucket(elem, true)
+		this.rootBucket = NodeBucketMulti(elem, true)
 	}
 
 	** Create a 'SizzleDoc' from an XML string.
@@ -39,9 +37,13 @@ class SizzleDoc {
 		SizzleDoc.make(elem)
 	}
 
+	** Returns the root element of the XML document
+	XElem rootElement() {
+		root
+	}
+	
 	** Queries the xml document with the given CSS selector any returns any matching elements.
-	@Operator
-	XElem[] get(Str cssSelector) {
+	XElem[] select(Str cssSelector) {
 		// CASE-INSENSITIVITY
 		matcher := selectorRegex.matcher(" " + cssSelector.lower)
 		
@@ -69,14 +71,15 @@ class SizzleDoc {
 	}
 	
 	** An alias for 'get()'
-	XElem[] select(Str selector) {
-		get(selector)
+	@Operator
+	XElem[] get(Str cssSelector) {
+		select(cssSelector)
 	}
 	
 	private XElem? findElemMatch(XNode? elem, Selector selector) {
 		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
-			while (isElement(elem) && !matches(elem, selector)) {
+			while (isElement(elem) && matches(elem, selector) == null) {
 				elem = elem?.parent
 			}
 			return isElement(elem) ? elem : null
@@ -84,7 +87,7 @@ class SizzleDoc {
 		
 		if (selector.combinator == Combinator.child) {
 			elem = elem?.parent
-			return matches(elem, selector) ? elem : null
+			return matches(elem, selector)
 		}
 
 		if (selector.combinator == Combinator.sibling) {
@@ -95,31 +98,16 @@ class SizzleDoc {
 			if (index < 1)
 				return null
 			elem = (parent as XElem).elems.getSafe(index - 1)
-			return matches(elem, selector) ? elem : null
+			return matches(elem, selector)
 		}
 		
 		return null
 	}
 	
-	private Bool matches(XElem? elem, Selector selector) {
-		if (!isElement(elem))
-			return false
-		bucket := buckets.getOrAdd(pathTo(elem)) { DomBucket(elem, false) }
-		matches := bucket.select(selector)
-		return matches.size > 0
-	}
-	
-	@Deprecated
-	internal static Str pathTo(XElem elem, StrBuf path := StrBuf()) {
-		name := "/${elem.name}"
-		if (isElement(elem.parent)) {
-			sibs := ((XElem) elem.parent).elems.findAll { it.name == elem.name }
-			if (sibs.size > 1)
-				name += "[" + sibs.indexSame(elem).toStr + "]"
-			pathTo(elem.parent, path)
-		}
-		path.add(name)
-		return path.toStr
+	private XElem? matches(XElem? elem, Selector selector) {
+		if (elem == null)
+			return null
+		return NodeBucketSingle(elem).select(selector)
 	}
 	
 	private static Bool isElement(XNode? node) {
