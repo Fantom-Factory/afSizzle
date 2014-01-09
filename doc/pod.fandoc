@@ -16,7 +16,7 @@ Overview [#overview]
  - Whitespace value attribute selector - '[att~=val]'
  - Language value attribute selector - '[att|=val]'
 
-'Sizzle' hopes to the ':first-child' pseudo-class soon.
+The ':first-child' pseudo-class is not yet implemented.
 
 The following selectors can not / will not be supported:
 
@@ -78,6 +78,8 @@ Usage [#usage]
 Currently, whitespace around child and sibling selectors is mandatory, meaning:
   - 'div > p' is valid, and
   - 'div>p' is NOT valid
+
+Note that the CSS selectors are case insensitive; meaning both '.stripe' and '.STRIPE' with match '<p class="Stripe">'.
 
 Have fun!
 
