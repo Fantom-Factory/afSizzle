@@ -1,17 +1,9 @@
 
-For 1.0.0
-=========
-5.11.1 :first-child pseudo-class
-
-Maybe the :lang(xxx) selector???
-
-
-
 For Future
 ==========
 Make case insensitivity optional - see "CASE-INSENSITIVITY"
 
-allow multiple pseudo selectors
+allow multiple pseudo selectors, e.g. DIV:lang(en):first-child
 
 CSS3...? 
  - http://www.w3.org/TR/css3-selectors/

@@ -15,8 +15,9 @@
  - Exact value attribute selector - `[att=val]`
  - Whitespace value attribute selector - `[att~=val]`
  - Language value attribute selector - `[att|=val]`
-  - The pseudo-class `:first-child`
-
+ - The pseudo-class `:first-child`
+ - The language pseudo-class `:lang(xxx)`
+ 
 
 
 ## Install

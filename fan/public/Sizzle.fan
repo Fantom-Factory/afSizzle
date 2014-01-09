@@ -1,6 +1,6 @@
 using xml
 
-** The main service class for selecting XML elements by means of CSS Selectors.
+** Service class for selecting XML elements by means of CSS Selectors.
 const class Sizzle {
 	
 	XElem[] selectFromStr(Str xml, Str cssSelector) {
