@@ -88,6 +88,12 @@ Have fun!
 Release Notes [#releaseNotes]
 *****************************
 
+v0.0.4 [#v0.0.4]
+----------------
+ - New: Added attribute selectors.
+ - New: Added 'checked' parameter to 'SizzleDoc.select()'
+ - Chg: Optomised DOM search.
+
 v0.0.2 [#v0.0.2]
 ----------------
  - New: Preview Release
