@@ -52,7 +52,7 @@ Full API & fandocs are available on the [status302 repository](http://repo.statu
         }
     }
 
-2). Run 'Example.fan' as a Fantom script from the command line:
+2). Run `Example.fan` as a Fantom script from the command line:
 
     C:\> fan Example.fan
     Hello from Sizzle!

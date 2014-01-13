@@ -7,18 +7,20 @@ class Build : BuildPod {
 		summary = "A library for querying XML documents by means of CSS 2.1 selectors"
 		version = Version("0.0.7")
 
-		meta	= [	"org.name"		: "Alien-Factory",
-					"org.uri"		: "http://www.alienfactory.co.uk/",
-					"proj.name"		: "Sizzle",
-					"proj.uri"		: "http://www.fantomfactory.org/pods/afSizzle",
-					"vcs.uri"		: "https://bitbucket.org/AlienFactory/afsizzle",
-					"license.name"	: "BSD 2-Clause License",	
-					"repo.private"	: "true"
-				]
+		meta	= [	
+			"org.name"		: "Alien-Factory",
+			"org.uri"		: "http://www.alienfactory.co.uk/",
+			"proj.name"		: "Sizzle",
+			"proj.uri"		: "http://www.fantomfactory.org/pods/afSizzle",
+			"vcs.uri"		: "https://bitbucket.org/AlienFactory/afsizzle",
+			"license.name"	: "BSD 2-Clause License",	
+			"repo.private"	: "true"
+		]
 
-		depends = [	"sys 1.0", 
-					"xml 1.0"
-				]
+		depends = [	
+			"sys 1.0", 
+			"xml 1.0"
+		]
 		
 		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`]
 		resDirs = [`doc/`]
