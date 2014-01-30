@@ -28,14 +28,18 @@ class SizzleDoc {
 		Str	idSelector		:= Str<| (?:#(\w+))?			|>.trim.replace("\\w", nonWord1)
 		Str	classesSelector	:= Str<| (\.[\w\.]+)?			|>.trim.replace("\\w", nonWord2)
 		Str	attrSelector	:= Str<| ((?:\[[^\]]+\])+)?(?:\s*([>+]))?		|>.trim
-		Str	pseudoSelector	:= Str<| (?::(first-child|lang)(?:\((\w+)\))?)?	|>.trim
+		// Note :first-child & :last-child do NOT have a parameter
+		Str	pseudoSelector	:= Str<| (?::(first-child|lang|last-child|nth-child|nth-last-child)(?:\((\w+)\))?)?	|>.trim
 
 		return Regex.fromStr("\\s+${typeSelector}${idSelector}${classesSelector}${attrSelector}${pseudoSelector}")
 	}
 	
 	** Create a 'SizzleDoc' from an XML string.
 	static new fromStr(Str xml) {
-		fromXDoc(XParser(xml.in).parseDoc)
+		fromXDoc(XParser(xml
+			// see http://fantom.org/sidewalk/topic/2233
+			//.replace("&nbsp;", "&#160;")
+		.in).parseDoc)
 	}
 
 	** Create a 'SizzleDoc' from an XML document.
@@ -49,8 +53,9 @@ class SizzleDoc {
 	}
 
 	** Returns the root element of the XML document
-	XElem rootElement() {
-		root
+	XElem rootElement {
+		get { root }
+		set { }
 	}
 	
 	** Queries the xml document with the given CSS selector any returns any matching elements.

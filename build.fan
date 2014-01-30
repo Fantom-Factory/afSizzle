@@ -27,21 +27,22 @@ class Build : BuildPod {
 
 		docApi = true
 		docSrc = true
-		
-		// exclude test code when building the pod
-		srcDirs = srcDirs.exclude { it.toStr.startsWith("test/") }
 	}
 	
 	@Target { help = "Compile to pod file and associated natives" }
 	override Void compile() {
+		// exclude test code when building the pod
+		srcDirs = srcDirs.exclude { it.toStr.startsWith("test/") }
+		resDirs = resDirs.exclude { it.toStr.startsWith("res/test/") }
+		
 		super.compile
 		
+		// copy src to %FAN_HOME% for F4 debugging
+		log.indent
 		destDir := Env.cur.homeDir.plus(`src/${podName}/`)
 		destDir.delete
 		destDir.create		
-		`fan/`.toFile.copyInto(destDir)
-		
-		log.indent
+		`fan/`.toFile.copyInto(destDir)		
 		log.info("Copied `fan/` to ${destDir.normalize}")
 		log.unindent
 	}
