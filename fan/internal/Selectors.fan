@@ -148,14 +148,35 @@ internal const class PseudoSelector {
 	Bool matches(XElem elem) {
 		if (!active)
 			return true
+		
+		// http://stackoverflow.com/questions/2717480/css-selector-for-first-element-with-class
 		if (name == "first-child") {
+			if (value != null) throw ParseErr(ErrMsgs.pseudoClassDoesNotTakeArgument(name, value))
 			return (elem.parent as XElem)?.elems?.first == elem
 		}
 		if (name == "lang") {
+			if (value == null) throw ParseErr(ErrMsgs.pseudoClassMustHaveArgument(name))
 			lang := findLang(elem)
-			Env.cur.err.printLine(value+lang)
 			return lang == value || (lang?.startsWith("${value}-") ?: false)
 		}
+		
+		// Bonus CSS3 pseudo classes!
+		if (name == "last-child") {
+			if (value != null) throw ParseErr(ErrMsgs.pseudoClassDoesNotTakeArgument(name, value))
+			return (elem.parent as XElem)?.elems?.last == elem
+		}
+		if (name == "nth-child") {
+			if (Int.fromStr(value, 10, false) == null) throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			// TODO: test num is positive
+			return (elem.parent as XElem)?.elems?.getSafe(value.toInt - 1) == elem
+		}
+		if (name == "nth-last-child") {
+			if (Int.fromStr(value, 10, false) == null) throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			// TODO: test num is positive
+			return (elem.parent as XElem)?.elems?.getSafe(-value.toInt) == elem
+		}
+		
+		
 		throw Err("WTF is a '$name($value)' pseudo selector?")
 	}
 	

@@ -18,6 +18,11 @@ Overview [#overview]
  - The pseudo-class ':first-child'
  - The language pseudo-class ':lang(xxx)'
 
+Bonus [CSS3]`http://www.w3.org/TR/css3-selectors/` selectors:
+ - The pseudo-class ':last-child'
+ - The pseudo-class ':nth-child(xxx)' *(basic numeric implementation)*
+ - The pseudo-class ':nth-last-child(xxx)' *(basic numeric implementation)*
+
 The following selectors can not be supported:
 
  - The link pseudo-classes ':link' and ':visited' can not be supported because they refer to a DOM model.
@@ -86,6 +91,9 @@ Have fun!
 
 Release Notes [#releaseNotes]
 *****************************
+v1.0.0 [#v1.0.0]
+----------------
+ - New: Support for ':nth-child(xxx)' CSS3 pseudo-class.
 
 v0.0.6 [#v0.0.6]
 ----------------
