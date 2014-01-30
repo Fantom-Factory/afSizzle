@@ -20,8 +20,8 @@ Overview [#overview]
 
 Bonus [CSS3]`http://www.w3.org/TR/css3-selectors/` selectors:
  - The pseudo-class ':last-child'
- - The pseudo-class ':nth-child(xxx)' *(basic numeric implementation)*
- - The pseudo-class ':nth-last-child(xxx)' *(basic numeric implementation)*
+ - The pseudo-class ':nth-child(n)' *(basic numeric implementation)*
+ - The pseudo-class ':nth-last-child(n)' *(basic numeric implementation)*
 
 The following selectors can not be supported:
 
