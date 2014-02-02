@@ -50,6 +50,7 @@ Quick Start [#quickStart]
 *************************
 1). Create a text file called 'Example.fan':
 pre>
+using xml
 using afSizzle
 
 class Example {
@@ -83,7 +84,7 @@ Currently, whitespace around child and sibling selectors is mandatory, meaning:
   - 'div > p' is valid, and
   - 'div>p' is NOT valid
 
-Note that the CSS selectors are case insensitive; meaning both '.stripe' and '.STRIPE' with match '<p class="Stripe">'.
+Note that the CSS selectors are case insensitive; meaning both '.stripe' and '.STRIPE' will match '<p class="Stripe">'.
 
 Have fun!
 
@@ -93,7 +94,9 @@ Release Notes [#releaseNotes]
 *****************************
 v1.0.0 [#v1.0.0]
 ----------------
- - New: Support for ':nth-child(xxx)' CSS3 pseudo-class.
+ - New: Support for ':last-child' CSS3 pseudo-class.
+ - New: Support for ':nth-child(n)' CSS3 pseudo-class. *(basic numeric implementation)*
+ - New: Support for ':nth-last-child(n)' CSS3 pseudo-class. *(basic numeric implementation)*
 
 v0.0.6 [#v0.0.6]
 ----------------

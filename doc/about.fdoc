@@ -14,7 +14,7 @@
  - Language value attribute selectors - '[att|=val]'
  - The pseudo-class ':first-child'
  - The language pseudo-class ':lang(xxx)'
- 
+
 Bonus [CSS3]`http://www.w3.org/TR/css3-selectors/` selectors:
  - The pseudo-class ':last-child'
  - The pseudo-class ':nth-child(n)' *(basic numeric implementation)*
