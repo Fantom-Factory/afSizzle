@@ -18,7 +18,7 @@ internal const class ErrMsgs {
 	// TODO: make it a proper CSS3 selector
 	// http://www.w3.org/TR/css3-selectors/#nth-child-pseudo
 	static Str pseudoClassArgMustBeNumeric(Str pClass, Str arg) {
-		"${pClass} must have a numeric argument: ${pClass}(${arg})"		
+		"For now, ${pClass} selectors only take simple numeric arguments: ${pClass}(${arg})"		
 	}
 	
 }

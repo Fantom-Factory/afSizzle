@@ -5,7 +5,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afSizzle"
 		summary = "A library for querying XML documents by means of CSS 2.1 selectors"
-		version = Version("0.0.7")
+		version = Version("1.0.0")
 
 		meta	= [	
 			"org.name"		: "Alien-Factory",
@@ -14,7 +14,7 @@ class Build : BuildPod {
 			"proj.uri"		: "http://www.fantomfactory.org/pods/afSizzle",
 			"vcs.uri"		: "https://bitbucket.org/AlienFactory/afsizzle",
 			"license.name"	: "BSD 2-Clause License",	
-			"repo.private"	: "true"
+			"repo.private"	: "false"
 		]
 
 		depends = [	

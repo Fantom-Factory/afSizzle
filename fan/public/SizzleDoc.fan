@@ -33,7 +33,7 @@ class SizzleDoc {
 
 		return Regex.fromStr("\\s+${typeSelector}${idSelector}${classesSelector}${attrSelector}${pseudoSelector}")
 	}
-	
+
 	** Create a 'SizzleDoc' from an XML string.
 	static new fromStr(Str xml) {
 		fromXDoc(XParser(xml
