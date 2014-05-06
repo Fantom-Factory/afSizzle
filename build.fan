@@ -16,7 +16,7 @@ class Build : BuildPod {
 			"license.name"	: "The MIT Licence",	
 			"repo.private"	: "true",
 			
-			"tags"			: "web"
+			"tags"			: "css, web"
 		]
 
 		depends = [	
