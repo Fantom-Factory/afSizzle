@@ -88,7 +88,7 @@ internal class NodeBucketSingle {
 
 		elem.attrs.each {
 			// CASE-INSENSITIVITY
-			elemAttrs[it.name.lower] = it.val.trim
+			elemAttrs[it.name.lower] = it.val.trim.lower
 		}
 	}
 

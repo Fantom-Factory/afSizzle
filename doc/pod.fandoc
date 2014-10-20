@@ -92,6 +92,10 @@ Have fun!
 
 Release Notes [#releaseNotes]
 *****************************
+v1.0.2 [#v1.0.2]
+----------------
+ - Bug: Could not match attribute values containing uppercase characters.
+
 v1.0.0 [#v1.0.0]
 ----------------
  - New: Support for ':last-child' CSS3 pseudo-class.
@@ -107,7 +111,7 @@ v0.0.4 [#v0.0.4]
 ----------------
  - New: Added attribute selectors.
  - New: Added 'checked' parameter to 'SizzleDoc.select()'
- - Chg: Optomised DOM search.
+ - Chg: Optimised DOM search.
 
 v0.0.2 [#v0.0.2]
 ----------------
