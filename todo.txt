@@ -1,7 +1,7 @@
 
 For Future
 ==========
-Replace Regex parsings with PEG parsing 
+Replace Regex parsing with Pegger PEG parsing 
 
 Make case insensitivity optional - see "CASE-INSENSITIVITY"
 
@@ -9,4 +9,3 @@ allow multiple pseudo selectors, e.g. DIV:lang(en):first-child
 
 CSS3...? 
  - http://www.w3.org/TR/css3-selectors/
- - Parse selectors with Parboiled https://github.com/sirthias/parboiled/wiki (re-write in Fantom?)

@@ -4,7 +4,7 @@ using xml
 ** 
 ** 'SizzleDoc' is intended for re-use with multiple CSS selections:
 **
-**    sizzDoc := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
+**    sizzDoc := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
 **    elems1  := sizzDoc.select("p.welcome")
 **    elems2  := sizzDoc.select("html p")
 ** 

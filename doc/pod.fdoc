@@ -23,7 +23,7 @@ Bonus [CSS3]`http://www.w3.org/TR/css3-selectors/` selectors:
  - The pseudo-class ':nth-child(n)' *(basic numeric implementation)*
  - The pseudo-class ':nth-last-child(n)' *(basic numeric implementation)*
 
-The following selectors can not be supported:
+The following selectors are not / can not be supported:
 
  - The link pseudo-classes ':link' and ':visited' can not be supported because they refer to a DOM model.
  - The dynamic pseudo-classes ':hover', ':active', and ':focus' can not be supported because they require user input.
@@ -36,13 +36,19 @@ Note: 'Sizzle' has no association with [Sizzle - The JavaScript CSS Selector Eng
 
 Install [#Install]
 ******************
-Install 'Sizzle' with the [Fantom Respository Manager]`http://fantom.org/doc/docFanr/Tool.html#install`:
+Install '@{project.name}' with the Fantom Repository Manager ( [fanr]`docFanr::Tool.install` ):
 
-  C:\> fanr install -r http://repo.status302.com/fanr/ afSizzle
+  C:\> fanr install -r http://repo.status302.com/fanr/ @{pod.name}
 
-Add a dependency to 'build.fan' to use in a Fantom project:
+To use in a [Fantom]`http://fantom.org/` project, add a dependency to 'build.fan':
 
-  depends = ["sys 1.0", ..., "afSizzle 0+"]
+  depends = ["sys 1.0", ..., "@{pod.name} @{pod.version}"]
+
+
+
+Documentation [#documentation]
+******************************
+Full API & fandocs are available on the [Status302 repository]`http://repo.status302.com/doc/@{pod.name}/#overview`.
 
 
 
@@ -55,9 +61,9 @@ using afSizzle
 
 class Example {
     Void main() {
-        xml   := """<html><p class="welcome">Hello from Sizzle!</p></html>"""
-        elems := Sizzle().selectFromStr(xml, "p.welcome")
-        echo(elems.first.text)  // -> Hello from Sizzle!
+        xhtml := "<html><p class='welcome'>Hello from Sizzle!</p></html>"
+        elems := SizzleDoc(xhtml).select("p.welcome")
+        echo(elems.first.text)  // --> Hello from Sizzle!
     }
 }
 <pre
@@ -76,17 +82,38 @@ Usage [#usage]
 
 `SizzleDoc` contains compiled and cached document information and is intended for re-use with multiple CSS selectors:
 
-    doc    := SizzleDoc("""<html><p class="welcome">Hello from Sizzle!</p></html>""")
+    doc    := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
     elems1 := doc.select("p.welcome")
     elems2 := doc.select("html p")
 
-Currently, whitespace around child and sibling selectors is mandatory, meaning:
-  - 'div > p' is valid, and
-  - 'div>p' is NOT valid
-
-Note that the CSS selectors are case insensitive; meaning both '.stripe' and '.STRIPE' will match '<p class="Stripe">'.
-
 Have fun!
+
+
+
+XML vs HTML [#xmlVsHtml]
+========================
+Sizzle only works with parsed XML documents, meaning your data has to be well formed.
+
+HTML allows dodgy, and non well formed, syntax such as void elements '<br>', and empty attributes '<input required>'.
+If your HTML contains such syntax then it needs to be converted to XML before it can be used with Sizzle.
+
+Use [HTML Parser]`pod:afHtmlParser` to do this.  
+
+Also note that XML does not allow named character references such as '&nbsp;' - they all need to be replaced with numerical character references such as '&#160;' or '&#xA0;'
+
+
+
+Case Insensitivity [#caseInsensitivity] 
+=======================================
+Note that the CSS selectors in Sizzle are case insensitive; meaning both '.stripe' and '.STRIPE' will match '<p class="Stripe">'.
+
+
+
+Known Issues [#knownIssues] 
+===========================
+Whitespace around child and sibling selectors is mandatory, meaning:
+  - 'div > p' is valid, and
+  - 'div>p' is *NOT* valid
 
 
 
