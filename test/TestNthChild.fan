@@ -3,7 +3,6 @@ internal class TestNthChild : SizzleTest {
 	
 	Void testNthChild() {
 		doc := SizzleDoc("""<html><h1>names</h1><p><span class="name tom">tom<div>1-tom</div></span><span class="name dick">dick<div>1-dick</div></span><span>harry</span></p></html>""")
-		
 		elems := doc.select("html > :nth-child(1)")
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")

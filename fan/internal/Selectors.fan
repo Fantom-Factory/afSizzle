@@ -166,13 +166,15 @@ internal const class PseudoSelector {
 			return (elem.parent as XElem)?.elems?.last == elem
 		}
 		if (name == "nth-child") {
-			if (Int.fromStr(value, 10, false) == null) throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
-			// TODO: test num is positive
+			if (Int.fromStr(value, 10, false) == null)	throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			// currently, '-' is not even allowed in the pseudoSelector regex
+//			if (value.toInt < 1)						throw ParseErr(ErrMsgs.pseudoClassMustBePositive(name, value))
 			return (elem.parent as XElem)?.elems?.getSafe(value.toInt - 1) == elem
 		}
 		if (name == "nth-last-child") {
-			if (Int.fromStr(value, 10, false) == null) throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
-			// TODO: test num is positive
+			if (Int.fromStr(value, 10, false) == null)	throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			// currently, '-' is not even allowed in the pseudoSelector regex
+//			if (value.toInt < 1) 						throw ParseErr(ErrMsgs.pseudoClassMustBePositive(name, value))
 			return (elem.parent as XElem)?.elems?.getSafe(-value.toInt) == elem
 		}
 		

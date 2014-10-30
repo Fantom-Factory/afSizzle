@@ -20,5 +20,8 @@ internal const class ErrMsgs {
 	static Str pseudoClassArgMustBeNumeric(Str pClass, Str arg) {
 		"For now, ${pClass} selectors only take simple numeric arguments: ${pClass}(${arg})"		
 	}
-	
+
+//	static Str pseudoClassMustBePositive(Str pClass, Str arg) {
+//		"${pClass} selector values must be greater than zero: e.g. ${pClass}(${arg})"
+//	}
 }
