@@ -1,0 +1,29 @@
+Versions
+********
+
+v1.0.2
+------
+ - Bug: Could not match attribute values containing uppercase characters.
+
+v1.0.0
+------
+ - New: Support for ':last-child' CSS3 pseudo-class.
+ - New: Support for ':nth-child(n)' CSS3 pseudo-class. *(basic numeric implementation)*
+ - New: Support for ':nth-last-child(n)' CSS3 pseudo-class. *(basic numeric implementation)*
+
+v0.0.6
+------
+ - New: Support for ':first-child' pseudo-class.
+ - New: Support for ':lang(xxx)' pseudo-class.
+
+v0.0.4
+------
+ - New: Added attribute selectors.
+ - New: Added 'checked' parameter to 'SizzleDoc.select()'
+ - Chg: Optimised DOM search.
+
+v0.0.2
+------
+ - New: Preview Release
+ - New: Support for universal, type, id, class, descendant, child and adjacent sibling selectors.
+

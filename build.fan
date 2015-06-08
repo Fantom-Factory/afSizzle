@@ -5,12 +5,12 @@ class Build : BuildPod {
 	new make() {
 		podName = "afSizzle"
 		summary = "A library for querying XML documents by means of CSS 2.1 selectors"
-		version = Version("1.0.3")
+		version = Version("1.0.2")
 
 		meta = [	
 			"proj.name"		: "Sizzle",
-			"repo.private"	: "true",			
-			"tags"			: "css, web"
+			"tags"			: "css, web",
+			"repo.public"	: "true"		
 		]
 
 		depends = [	
@@ -19,6 +19,6 @@ class Build : BuildPod {
 		]
 		
 		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`]
-		resDirs = [,]
+		resDirs = [`doc/`]
 	}	
 }
