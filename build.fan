@@ -9,7 +9,7 @@ class Build : BuildPod {
 
 		meta = [	
 			"proj.name"		: "Sizzle",
-			"tags"			: "css, web",
+			"repo.tags"		: "css, web",
 			"repo.public"	: "false"		
 		]
 
