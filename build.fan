@@ -18,7 +18,7 @@ class Build : BuildPod {
 			"xml 1.0"
 		]
 		
-		srcDirs = [`test/`, `fan/`, `fan/public/`, `fan/internal/`]
+		srcDirs = [`fan/`, `fan/internal/`, `fan/public/`, `test/`]
 		resDirs = [`doc/`]
 	}	
 }
