@@ -5,7 +5,7 @@ class Build : BuildPod {
 	new make() {
 		podName = "afSizzle"
 		summary = "A library for querying XML documents by means of CSS 2.1 selectors"
-		version = Version("1.0.4")
+		version = Version("1.0.5")
 
 		meta = [	
 			"pod.dis"		: "Sizzle",
