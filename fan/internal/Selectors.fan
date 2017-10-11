@@ -84,10 +84,10 @@ internal const class AttrSelector {
 			return attrs[name] == value
 		}
 		if (isWhitespace) {
-			return attrs[name]?.split?.contains(value) ?: false
+			return attrs.containsKey(name) && attrs[name].split.contains(value)
 		}
 		if (isLang) {
-			return attrs[name] == value || attrs[name].startsWith("${value}-") 
+			return attrs[name] == value || (attrs.containsKey(name) && attrs[name].startsWith("${value}-")) 
 		}
 		throw Err("WTF is a ${toStr}?")
 	}

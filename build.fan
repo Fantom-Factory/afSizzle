@@ -8,9 +8,9 @@ class Build : BuildPod {
 		version = Version("1.0.3")
 
 		meta = [	
-			"proj.name"		: "Sizzle",
+			"pod.dis"		: "Sizzle",
 			"repo.tags"		: "css, web",
-			"repo.public"	: "false"		
+			"repo.public"	: "true"
 		]
 
 		depends = [	
