@@ -1,8 +1,9 @@
 #Sizzle v1.0.2
 ---
-[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom.org/)
+
+[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
 [![pod: v1.0.2](http://img.shields.io/badge/pod-v1.0.2-yellow.svg)](http://www.fantomfactory.org/pods/afSizzle)
-![Licence: MIT](http://img.shields.io/badge/licence-MIT-blue.svg)
+![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)
 
 ## Overview
 
@@ -34,17 +35,21 @@ Note: Sizzle has no association with [Sizzle - The JavaScript CSS Selector Engin
 
 ## Install
 
-Install `Sizzle` with the Fantom Repository Manager ( [fanr](http://fantom.org/doc/docFanr/Tool.html#install) ):
+Install `Sizzle` with the Fantom Pod Manager ( [FPM](http://eggbox.fantomfactory.org/pods/afFpm) ):
 
-    C:\> fanr install -r http://repo.status302.com/fanr/ afSizzle
+    C:\> fpm install afSizzle
 
-To use in a [Fantom](http://fantom.org/) project, add a dependency to `build.fan`:
+Or install `Sizzle` with [fanr](http://fantom.org/doc/docFanr/Tool.html#install):
+
+    C:\> fanr install -r http://eggbox.fantomfactory.org/fanr/ afSizzle
+
+To use in a [Fantom](http://fantom-lang.org/) project, add a dependency to `build.fan`:
 
     depends = ["sys 1.0", ..., "afSizzle 1.0"]
 
 ## Documentation
 
-Full API & fandocs are available on the [Fantom Pod Repository](http://pods.fantomfactory.org/pods/afSizzle/).
+Full API & fandocs are available on the [Eggbox](http://eggbox.fantomfactory.org/pods/afSizzle/) - the Fantom Pod Repository.
 
 ## Quick Start
 
@@ -73,7 +78,7 @@ Full API & fandocs are available on the [Fantom Pod Repository](http://pods.fant
 
 `Sizzle` usage is fairly simple and self explanatory; XML document in, XML elements out.
 
-[SizzleDoc](http://pods.fantomfactory.org/pods/afSizzle/api/SizzleDoc) contains compiled and cached document information and is intended for re-use with multiple CSS selectors:
+[SizzleDoc](http://eggbox.fantomfactory.org/pods/afSizzle/api/SizzleDoc) contains compiled and cached document information and is intended for re-use with multiple CSS selectors:
 
     doc    := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
     elems1 := doc.select("p.welcome")
@@ -85,7 +90,7 @@ Sizzle only works with parsed XML documents, meaning your data has to be well fo
 
 HTML allows dodgy, and non well formed, syntax such as void elements `<br>`, and empty attributes `<input required>`. If your HTML contains such syntax then it needs to be converted to XML before it can be used with Sizzle.
 
-Use [HTML Parser](http://pods.fantomfactory.org/pods/afHtmlParser) to do this.
+Use [HTML Parser](http://eggbox.fantomfactory.org/pods/afHtmlParser) to do this.
 
 Also note that XML does not allow named character references such as `&nbsp;` - they all need to be replaced with numerical character references such as `&#160;` or `&#xA0;`
 
