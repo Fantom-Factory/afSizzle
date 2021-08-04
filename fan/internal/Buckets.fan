@@ -33,7 +33,7 @@ internal class NodeBucketMulti {
 		
 		if (!selector.id.isEmpty) {
 			// CASE-INSENSITIVITY - the "id"
-			ids 	:= attrBuckets["id"]?.get(selector.id)
+			ids 	:= attrBuckets["id"]?.get(selector.id) ?: XElem#.emptyList
 			gotten	= gotten.intersection(ids)
 		}
 
