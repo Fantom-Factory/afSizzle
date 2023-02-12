@@ -10,10 +10,10 @@ internal class TestFirstChild : SizzleTest {
 
 		elems = doc.select(":first-child")
 		verifyEq(elems.size, 4)
-		verifyElem(elems[0], "div", "1-tom")
-		verifyElem(elems[1], "div", "1-dick")
-		verifyElem(elems[2], "h1", "names")
-		verifyElem(elems[3], "span", "tom")
+		verifyElem(elems[0], "h1", "names")
+		verifyElem(elems[1], "span", "tom")
+		verifyElem(elems[2], "div", "1-tom")
+		verifyElem(elems[3], "div", "1-dick")
 
 		elems = doc.select("p .tom:first-child")
 		verifyEq(elems.size, 1)

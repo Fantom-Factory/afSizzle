@@ -10,8 +10,8 @@ internal class TestLang : SizzleTest {
 
 		elems = doc.select(":lang(en)")
 		verifyEq(elems.size, 2)
-		verifyElem(elems[0], "p", null)
-		verifyElem(elems[1], "html", null)
+		verifyElem(elems[0], "html", null)
+		verifyElem(elems[1], "p", null)
 
 		elems = doc.select(":lang(po)")
 		verifyEq(elems.size, 1)
