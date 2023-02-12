@@ -62,7 +62,7 @@ class SizzleDoc {
 	
 	** Queries the xml document with the given CSS selector any returns any matching elements.
 	** 
-	** Throws 'ParseErr' should the CSS selector by invalid and 'checked' is 'true' (else an empty list is returned). 
+	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
 	XElem[] select(Str cssSelector, Bool checked := true) {
 		// CASE-INSENSITIVITY
 		cssSelectorStr := " " + cssSelector.lower
@@ -92,6 +92,25 @@ class SizzleDoc {
 				elem = findMatch(elem, sel)
 				return elem != null
 			}
+		}
+		
+		return survivors
+	}
+
+	** Queries the document for elements under the given parent, returning any matches.
+	** 
+	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
+	XElem[] selectFrom(XElem parent, Str cssSelector, Bool checked := true) {
+		survivors := select(cssSelector, checked)
+		
+		// make sure our base node is in the hierarchy
+		survivors = survivors.findAll |XElem? elem->Bool| {
+			survivor := false
+			while (survivor == false && elem != null) {
+				survivor = elem.parent == parent
+				elem = elem.parent as XElem
+			}
+			return survivor
 		}
 		
 		return survivors
