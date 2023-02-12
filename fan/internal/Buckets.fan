@@ -10,6 +10,29 @@ internal class NodeBucketMulti {
 		walk(elem, recurse)
 	}
 	
+	Void add(XElem elem) {
+		walk(elem, false)
+	}	
+
+	Void update(XElem elem) {
+		// remove all trace of Elem
+		remove(elem)
+
+		// ...and add it again!
+		add(elem)
+	}	
+
+	Void remove(XElem elem) {
+		// type should NOT have changed - but meh, who knows!
+		typeBucket.remove(elem)
+		classBucket.remove(elem)
+		attrBuckets.each |bucket| {
+			bucket.remove(elem)
+		}
+		// let's not trim buckets - there'll be 100s of them!
+		// and Docs in testing are pretty short lived, so why waste precious processing cycles!?
+	}
+	
 	private Void walk(XElem elem, Bool recurse) {
 		typeBucket[elem.name] = elem
 
@@ -55,6 +78,7 @@ internal class NodeBucketMulti {
 
 internal class ElemBucket {
 	Str:XElem[]	elems	:= [:]
+	XElem[]		all		:= XElem[,]
 
 	@Operator
 	XElem[] get(Str? name) {
@@ -65,11 +89,16 @@ internal class ElemBucket {
 	Void set(Str name, XElem elem) {
 		// CASE-INSENSITIVITY
 		elems.getOrAdd(name.lower) { XElem[,] }.add(elem)
+		if (all.contains(elem) == false)
+			all.add(elem)
 	}
-	
-	once XElem[] all() {
-		elems.vals.flatten.unique
+
+	Void remove(XElem elem) {
+		elems.each { it.remove(elem) }
+		all.remove(elem)
 	}
+
+	Bool isEmpty() { all.isEmpty }	
 }
 
 internal class NodeBucketSingle {

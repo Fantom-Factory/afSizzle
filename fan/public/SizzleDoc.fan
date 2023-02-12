@@ -103,6 +103,18 @@ class SizzleDoc {
 		select(cssSelector, checked)
 	}
 	
+	Void add(XElem elem) {
+		rootBucket.add(elem)
+	}
+
+	Void update(XElem elem) {
+		rootBucket.update(elem)
+	}	
+
+	Void remove(XElem elem) {
+		rootBucket.remove(elem)
+	}
+	
 	private XElem? findMatch(XNode? elem, Selector selector) {
 		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
