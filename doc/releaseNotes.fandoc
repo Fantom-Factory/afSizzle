@@ -1,3 +1,9 @@
+
+v1.1.0 [#v1.1.0]
+======
+ - New: 'SizzleDoc' now operated on a new 'Elem' abstraction.
+ - New: 'SizzleXml' operates on XML documents.
+
 v1.0.6 [#v1.0.6]
 ======
  - New: 'SizzleDoc.selectFrom()' for selecting elems *under* a given elem.

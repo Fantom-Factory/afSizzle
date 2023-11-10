@@ -40,7 +40,7 @@ Quick Start
     class Example {
         Void main() {
             xhtml := "<html><p class='welcome'>Hello from Sizzle!</p></html>"
-            elems := SizzleDoc(xhtml).select("p.welcome")
+            elems := SizzleXml(xhtml).select("p.welcome")
             echo(elems.first.text)  // --> Hello from Sizzle!
         }
     }
@@ -60,7 +60,7 @@ Usage
 
     syntax: fantom
 
-    doc    := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
+    doc    := SizzleXml("<html><p class='welcome'>Hello from Sizzle!</p></html>")
     elems1 := doc.select("p.welcome")
     elems2 := doc.select("html p")
 

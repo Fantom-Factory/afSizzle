@@ -13,12 +13,12 @@ internal class NodeBucketMulti {
 		walk(elem, true)
 	}	
 
-	Void update(Elem elem) {
+	Void update(Elem elem, Bool recurse := false) {
 		// remove all trace of Elem
-		remove(elem, false)
+		remove(elem, recurse)
 
 		// ...and add it again!
-		walk(elem, false)
+		walk(elem, recurse)
 	}	
 
 	Void remove(Elem elem, Bool recurse) {

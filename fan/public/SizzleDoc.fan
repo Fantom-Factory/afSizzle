@@ -2,25 +2,24 @@ using xml::XElem
 using xml::XDoc
 using xml::XParser
 
-** Holds a representation of an XML document that may be queried with CSS selectors. 
-** 
-** 'SizzleDoc' is intended for re-use with multiple CSS selections:
-**
-**    syntax: fantom
-** 
-**    sizzDoc := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
-**    elems1  := sizzDoc.select("p.welcome")
-**    elems2  := sizzDoc.select("html p")
-** 
-internal class SizzleDoc {	
+** Holds a document that may be queried with CSS selectors. 
+class SizzleDoc {	
 	private static const Regex	selectorRegex	:= theMainSelector
 	
-	private Elem				root
 	private NodeBucketMulti		rootBucket
+
+	** Returns the root element of the XML document.
+	Elem root { private set }
 	
-	private new make(Elem elem) {
-		this.root = elem
-		this.rootBucket = NodeBucketMulti(elem, true)
+	** Create a 'SizzleDoc' from the given root Elem.
+	new make(Elem root) {
+		this.root = root
+		this.rootBucket = NodeBucketMulti(root, true)
+	}
+	
+	** Create a 'SizzleDoc' from the given XML string.
+	static new fromXml(Str xml) {
+		SizzleXml(xml)->doc
 	}
 
 	private static Regex theMainSelector() {
@@ -37,30 +36,6 @@ internal class SizzleDoc {
 		return Regex.fromStr("\\s+${typeSelector}${idSelector}${classesSelector}${attrSelector}${pseudoSelector}")
 	}
 
-	** Create a 'SizzleDoc' from an XML string.
-	static new fromXml(Str xml) {
-		fromXDoc(XParser(xml
-			// see http://fantom.org/sidewalk/topic/2233
-			//.replace("&nbsp;", "&#160;")
-		.in).parseDoc)
-	}
-
-	** Create a 'SizzleDoc' from an XML document.
-	static new fromXDoc(XDoc doc) {
-		fromXElem(doc.root)
-	}
-
-	** Create a 'SizzleDoc' from an XML element.
-	static new fromXElem(XElem elem) {
-		SizzleDoc.make(Elem(elem))
-	}
-
-	** Returns the root element of the XML document
-	Elem rootElement {
-		get { root.toNative }
-		set { }
-	}
-	
 	** Queries the document with the given CSS selector any returns any matching elements.
 	** 
 	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
@@ -129,14 +104,17 @@ internal class SizzleDoc {
 		select(cssSelector, checked)
 	}
 	
+	** Adds another root element.
 	Void add(Elem elem) {
 		rootBucket.add(elem)
 	}
 
-	Void update(Elem elem) {
-		rootBucket.update(elem)
+	** Updates / refreshes the given Elem - must have already been added. 
+	Void update(Elem elem, Bool recurse := false) {
+		rootBucket.update(elem, recurse)
 	}	
 
+	** Removed the the given Elem.
 	Void remove(Elem elem) {
 		rootBucket.remove(elem, true)
 	}
@@ -144,10 +122,10 @@ internal class SizzleDoc {
 	private Elem? findMatch(Elem? elem, Selector selector) {
 		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
-			while (isElement(elem) && matches(elem, selector) == null) {
+			while (elem != null && matches(elem, selector) == null) {
 				elem = elem?.parent
 			}
-			return isElement(elem) ? elem : null
+			return elem
 		}
 		
 		if (selector.combinator == Combinator.child) {
@@ -157,12 +135,12 @@ internal class SizzleDoc {
 
 		if (selector.combinator == Combinator.sibling) {
 			parent := elem?.parent
-			if (!isElement(parent))
+			if (parent == null)
 				return null
-			index := (parent as Elem).children.indexSame(elem)
+			index := parent.children.index(elem)
 			if (index < 1)
 				return null
-			elem = (parent as Elem).children.getSafe(index - 1)
+			elem = parent.children.getSafe(index - 1)
 			return matches(elem, selector)
 		}
 		
@@ -173,9 +151,5 @@ internal class SizzleDoc {
 		if (elem == null)
 			return null
 		return NodeBucketSingle(elem).select(selector)
-	}
-	
-	private static Bool isElement(Elem? node) {
-		(node as Elem) != null
 	}
 }
