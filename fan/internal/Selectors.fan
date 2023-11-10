@@ -1,4 +1,3 @@
-using xml
 
 ** Test Str:
 ** attr1[wot] attr2[wot=ever] attr3[wot~=ever] attr4[wot|=ever] attr5[wot~="ever"] attr6[wot|='ever']
@@ -54,24 +53,24 @@ internal const class AttrSelector {
 		this.value	= matcher.group(3)
 	}
 
-	XElem[] matchMultiNode(Str:ElemBucket buckets) {
+	Elem[] matchMultiNode(Str:ElemBucket buckets) {
 		if (isAny) {
-			return buckets[name]?.all ?: XElem#.emptyList
+			return buckets[name]?.all ?: Elem#.emptyList
 		}
 		if (isExact) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key == value
-			}?.vals?.flatten ?: XElem#.emptyList
+			}?.vals?.flatten ?: Elem#.emptyList
 		}
 		if (isWhitespace) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key.split.contains(value)
-			}?.vals?.flatten ?: XElem#.emptyList
+			}?.vals?.flatten ?: Elem#.emptyList
 		}
 		if (isLang) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key == value || key.startsWith("${value}-")
-			}?.vals?.flatten ?: XElem#.emptyList
+			}?.vals?.flatten ?: Elem#.emptyList
 		}
 		throw Err("WTF is a ${toStr}?")
 	}
@@ -145,48 +144,48 @@ internal const class PseudoSelector {
 		return name != null 
 	}
 	
-	Bool matches(XElem elem) {
+	Bool matches(Elem elem) {
 		if (!active)
 			return true
 		
 		// http://stackoverflow.com/questions/2717480/css-selector-for-first-element-with-class
 		if (name == "first-child") {
-			if (value != null) throw ParseErr(ErrMsgs.pseudoClassDoesNotTakeArgument(name, value))
-			return (elem.parent as XElem)?.elems?.first == elem
+			if (value != null) throw ParseErr("${name} selectors do NOT have arguments: ${name}(${value})")
+			return elem.parent?.children?.first == elem
 		}
 		if (name == "lang") {
-			if (value == null) throw ParseErr(ErrMsgs.pseudoClassMustHaveArgument(name))
+			if (value == null) throw ParseErr("${name} selectors must have an argument: e.g. ${name}(xxx)")
 			lang := findLang(elem)
 			return lang == value || (lang?.startsWith("${value}-") ?: false)
 		}
 		
 		// Bonus CSS3 pseudo classes!
 		if (name == "last-child") {
-			if (value != null) throw ParseErr(ErrMsgs.pseudoClassDoesNotTakeArgument(name, value))
-			return (elem.parent as XElem)?.elems?.last == elem
+			if (value != null) throw ParseErr("${name} selectors do NOT have arguments: ${name}(${value})")
+			return elem.parent?.children?.last == elem
 		}
 		if (name == "nth-child") {
-			if (Int.fromStr(value, 10, false) == null)	throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			if (Int.fromStr(value, 10, false) == null)	throw ParseErr("For now, ${name} selectors only take simple numeric arguments: ${name}(${value})")
 			// currently, '-' is not even allowed in the pseudoSelector regex
 //			if (value.toInt < 1)						throw ParseErr(ErrMsgs.pseudoClassMustBePositive(name, value))
-			return (elem.parent as XElem)?.elems?.getSafe(value.toInt - 1) == elem
+			return elem.parent?.children?.getSafe(value.toInt - 1) == elem
 		}
 		if (name == "nth-last-child") {
-			if (Int.fromStr(value, 10, false) == null)	throw ParseErr(ErrMsgs.pseudoClassArgMustBeNumeric(name, value))
+			if (Int.fromStr(value, 10, false) == null)	throw ParseErr("For now, ${name} selectors only take simple numeric arguments: ${name}(${value})")
 			// currently, '-' is not even allowed in the pseudoSelector regex
 //			if (value.toInt < 1) 						throw ParseErr(ErrMsgs.pseudoClassMustBePositive(name, value))
-			return (elem.parent as XElem)?.elems?.getSafe(-value.toInt) == elem
+			return elem.parent?.children?.getSafe(-value.toInt) == elem
 		}
 		
 		
 		throw Err("WTF is a '$name($value)' pseudo selector?")
 	}
 	
-	private Str? findLang(XNode? elem) {
+	private Str? findLang(Elem? elem) {
 		if (elem == null)
 			return null
 		// CASE-INSENSITIVITY
-		lang := (elem as XElem)?.attrs?.find { it.name.equalsIgnoreCase("lang") || it.name.equalsIgnoreCase("xml:lang") }?.val
+		lang := (elem as Elem)?.attrs?.find |val, key| { key.equalsIgnoreCase("lang") || key.equalsIgnoreCase("xml:lang") }
 		return (lang != null) ? lang.lower : findLang(elem.parent)
 	}
 }

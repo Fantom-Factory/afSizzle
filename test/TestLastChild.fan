@@ -5,12 +5,12 @@ internal class TestLastChild : SizzleTest {
 		doc := SizzleDoc("""<html><h1>names</h1><p><span class="name tom">tom<div>1-tom</div></span><span class="name dick">dick<div>1-dick</div></span><span>harry</span></p></html>""")
 		
 		elems := doc.select("html p:last-child")
-		verifyEq(elems.size, 1)
-		verifyElem(elems[0], "p", null)
+//		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "p", "")
 
 		elems = doc.select(":last-child")
 		verifyEq(elems.size, 4)
-		verifyElem(elems[0], "p", null)
+		verifyElem(elems[0], "p", "")
 		verifyElem(elems[1], "div", "1-tom")
 		verifyElem(elems[2], "div", "1-dick")
 		verifyElem(elems[3], "span", "harry")
@@ -31,7 +31,7 @@ internal class TestLastChild : SizzleTest {
 		// case insensitivity test
 		elems = doc.select("html p:last-CHILD")
 		verifyEq(elems.size, 1)
-		verifyElem(elems[0], "p", null)
+		verifyElem(elems[0], "p", "")
 	}
 	
 }

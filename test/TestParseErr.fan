@@ -2,7 +2,7 @@
 internal class TestParseErr : SizzleTest {
 	
 	Void testParseErrChecked() {
-		verifyErrTypeMsg(ParseErr#, ErrMsgs.selectorNotValid("dude[]")) {
+		verifyErrTypeMsg(ParseErr#, "CSS selector is not valid: dude[]") {
 			SizzleDoc("<xml/>").select("dude[]")
 		}
 	}

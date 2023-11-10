@@ -1,28 +1,30 @@
-using xml
 
 internal class NodeBucketMulti {
 	
-	ElemBucket 		typeBucket	:= ElemBucket() 
-	ElemBucket 		classBucket	:= ElemBucket() 
-	Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] // { caseInsensitive = true } - done through .lower
+	private ElemBucket 		typeBucket	:= ElemBucket() 
+	private ElemBucket 		classBucket	:= ElemBucket() 
+	private Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] // { caseInsensitive = true } - done through .lower
 	
-	new make(XElem elem, Bool recurse) {
+	new make(Elem elem, Bool recurse) {
 		walk(elem, recurse)
 	}
 	
-	Void add(XElem elem) {
+	Void add(Elem elem) {
+		walk(elem, true)
+	}	
+
+	Void update(Elem elem) {
+		// remove all trace of Elem
+		remove(elem, false)
+
+		// ...and add it again!
 		walk(elem, false)
 	}	
 
-	Void update(XElem elem) {
-		// remove all trace of Elem
-		remove(elem)
+	Void remove(Elem elem, Bool recurse) {
+		if (recurse)
+			elem.children.each { this.remove(it, recurse) }
 
-		// ...and add it again!
-		add(elem)
-	}	
-
-	Void remove(XElem elem) {
 		// type should NOT have changed - but meh, who knows!
 		typeBucket.remove(elem)
 		classBucket.remove(elem)
@@ -33,30 +35,30 @@ internal class NodeBucketMulti {
 		// and Docs in testing are pretty short lived, so why waste precious processing cycles!?
 	}
 	
-	private Void walk(XElem elem, Bool recurse) {
+	private Void walk(Elem elem, Bool recurse) {
 		typeBucket[elem.name] = elem
 
-		elem.attr("class", false)?.val?.split?.each {
+		elem.attr("class")?.split?.each {
 			classBucket[it] = elem
 		}
 
-		elem.attrs.each {
+		elem.attrs.each |val, key| {
 			// CASE-INSENSITIVITY
-			bucket := attrBuckets.getOrAdd(it.name.lower) { ElemBucket() }
-			bucket[it.val.trim] = elem
+			bucket := attrBuckets.getOrAdd(key.lower) { ElemBucket() }
+			bucket[val.trim] = elem
 		}
 		
 		if (recurse)
-			elem.elems.each { walk(it, recurse) }
+			elem.children.each { walk(it, recurse) }
 	}
 
-	XElem[] select(Selector selector) {
+	Elem[] select(Selector selector) {
 		types 	:= (selector.type == "*") ? typeBucket.all : typeBucket[selector.type]
 		gotten	:= types
 		
 		if (!selector.id.isEmpty) {
 			// CASE-INSENSITIVITY - the "id"
-			ids 	:= attrBuckets["id"]?.get(selector.id) ?: XElem#.emptyList
+			ids 	:= attrBuckets["id"]?.get(selector.id) ?: Elem#.emptyList
 			gotten	= gotten.intersection(ids)
 		}
 
@@ -77,51 +79,60 @@ internal class NodeBucketMulti {
 }
 
 internal class ElemBucket {
-	Str:XElem[]	elems	:= [:]
-	XElem[]		all		:= XElem[,]
+	Str:Elem[]	elems	:= Str:Elem[][:]
+	Elem[]		all		:= Elem[,]
 
 	@Operator
-	XElem[] get(Str? name) {
-		elems[name ?: Str.defVal] ?: XElem#.emptyList
+	Elem[] get(Str? name) {
+		elems[name ?: Str.defVal] ?: Elem#.emptyList
 	}
 
+	** set() is really add()
 	@Operator
-	Void set(Str name, XElem elem) {
+	Void set(Str name, Elem elem) {
 		// CASE-INSENSITIVITY
-		elems.getOrAdd(name.lower) { XElem[,] }.add(elem)
+		name = name.lower
+		elems := this.elems.get(name)
+		if (elems == null) {
+			elems = Elem[,]
+			this.elems[name] = elems
+		}
+		if (elems.contains(elem) == false)
+			elems.add(elem)
+
 		if (all.contains(elem) == false)
 			all.add(elem)
 	}
-
-	Void remove(XElem elem) {
+	
+	Void remove(Elem elem) {
 		elems.each { it.remove(elem) }
 		all.remove(elem)
 	}
 
-	Bool isEmpty() { all.isEmpty }	
+	Bool isEmpty() { all.isEmpty }
 }
 
 internal class NodeBucketSingle {
 	
-	XElem	theElement
+	Elem	theElement
 	Str 	elemType
 	Str[]	elemClasses
 	Str:Str	elemAttrs	:= [Str:Str][:]	// { caseInsensitive = true } - done through .lower
 	
-	new make(XElem elem) {
+	new make(Elem elem) {
 		theElement	= elem
 		// CASE-INSENSITIVITY
 		elemType	= elem.name.lower
 		// CASE-INSENSITIVITY
-		elemClasses	= elem.attr("class", false)?.val?.lower?.split ?: Str#.emptyList 
+		elemClasses	= elem.attr("class")?.lower?.split ?: Str#.emptyList 
 
-		elem.attrs.each {
+		elem.attrs.each |val, key| {
 			// CASE-INSENSITIVITY
-			elemAttrs[it.name.lower] = it.val.trim.lower
+			elemAttrs[key.lower] = val.trim.lower
 		}
 	}
 
-	XElem? select(Selector selector) {
+	Elem? select(Selector selector) {
 		match := (selector.type == "*") || (selector.type == elemType)
 		
 		if (!selector.id.isEmpty) {

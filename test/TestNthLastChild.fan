@@ -6,7 +6,7 @@ internal class TestNthLastChild : SizzleTest {
 		
 		elems := doc.select("html > :nth-last-child(1)")
 		verifyEq(elems.size, 1)
-		verifyElem(elems[0], "p", null)
+		verifyElem(elems[0], "p", "")
 
 		elems = doc.select("html > :nth-last-child(2)")
 		verifyEq(elems.size, 1)

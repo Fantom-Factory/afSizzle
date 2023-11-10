@@ -1,4 +1,6 @@
-using xml
+using xml::XElem
+using xml::XDoc
+using xml::XParser
 
 ** Holds a representation of an XML document that may be queried with CSS selectors. 
 ** 
@@ -10,14 +12,13 @@ using xml
 **    elems1  := sizzDoc.select("p.welcome")
 **    elems2  := sizzDoc.select("html p")
 ** 
-class SizzleDoc {	
+internal class SizzleDoc {	
 	private static const Regex	selectorRegex	:= theMainSelector
 	
-	private Str:NodeBucketMulti	buckets	:= Str:NodeBucketMulti[:] { caseInsensitive = true }
-	private XElem				root
+	private Elem				root
 	private NodeBucketMulti		rootBucket
 	
-	private new make(XElem elem) {
+	private new make(Elem elem) {
 		this.root = elem
 		this.rootBucket = NodeBucketMulti(elem, true)
 	}
@@ -37,7 +38,7 @@ class SizzleDoc {
 	}
 
 	** Create a 'SizzleDoc' from an XML string.
-	static new fromStr(Str xml) {
+	static new fromXml(Str xml) {
 		fromXDoc(XParser(xml
 			// see http://fantom.org/sidewalk/topic/2233
 			//.replace("&nbsp;", "&#160;")
@@ -51,25 +52,31 @@ class SizzleDoc {
 
 	** Create a 'SizzleDoc' from an XML element.
 	static new fromXElem(XElem elem) {
-		SizzleDoc.make(elem)
+		SizzleDoc.make(Elem(elem))
 	}
 
 	** Returns the root element of the XML document
-	XElem rootElement {
-		get { root }
+	Elem rootElement {
+		get { root.toNative }
 		set { }
 	}
 	
-	** Queries the xml document with the given CSS selector any returns any matching elements.
+	** Queries the document with the given CSS selector any returns any matching elements.
 	** 
 	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
-	XElem[] select(Str cssSelector, Bool checked := true) {
+	Elem[] select(Str cssSelector, Bool checked := true) {
+		// this is just a quick hack for now - but it gets me out of a hole
+		// if I need to support a complicated selector with a "," then I probably reconsider the selector!
+		cssSelector.split(',').flatMap { doSelect(it, checked) }
+	}
+
+	private Elem[] doSelect(Str cssSelector, Bool checked := true) {
 		// CASE-INSENSITIVITY
 		cssSelectorStr := " " + cssSelector.lower
 		if (checked)
 			selectorRegex.split(cssSelectorStr, 1000).each |leftovers| {
 				if (!leftovers.isEmpty)
-					throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))			
+					throw ParseErr("CSS selector is not valid: ${cssSelector}")
 			}
 
 		matcher := selectorRegex.matcher(cssSelectorStr)
@@ -80,14 +87,14 @@ class SizzleDoc {
 		}
 
 		if (selectors.isEmpty)
-			return !checked ? XElem#.emptyList : throw ParseErr(ErrMsgs.selectorNotValid(cssSelector))
+			return !checked ? Elem#.emptyList : throw ParseErr("CSS selector is not valid: ${cssSelector}")
 		
 		possibles := rootBucket.select(selectors.last)
 		
 		if (selectors.size == 1)
 			return possibles
 
-		survivors := possibles.findAll |XNode? elem -> Bool| {
+		survivors := possibles.findAll |Elem? elem -> Bool| {
 			selectors[0..<-1].reverse.all |sel -> Bool| {
 				elem = findMatch(elem, sel)
 				return elem != null
@@ -96,19 +103,19 @@ class SizzleDoc {
 		
 		return survivors
 	}
-
+	
 	** Queries the document for elements under the given parent, returning any matches.
 	** 
 	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
-	XElem[] selectFrom(XElem parent, Str cssSelector, Bool checked := true) {
+	Elem[] selectFrom(Elem parent, Str cssSelector, Bool checked := true) {
 		survivors := select(cssSelector, checked)
 		
 		// make sure our base node is in the hierarchy
-		survivors = survivors.findAll |XElem? elem->Bool| {
+		survivors = survivors.findAll |Elem? elem->Bool| {
 			survivor := false
 			while (survivor == false && elem != null) {
 				survivor = elem.parent == parent
-				elem = elem.parent as XElem
+				elem = elem.parent
 			}
 			return survivor
 		}
@@ -118,23 +125,23 @@ class SizzleDoc {
 	
 	** An alias for 'select()'
 	@Operator
-	XElem[] get(Str cssSelector, Bool checked := true) {
+	Elem[] get(Str cssSelector, Bool checked := true) {
 		select(cssSelector, checked)
 	}
 	
-	Void add(XElem elem) {
+	Void add(Elem elem) {
 		rootBucket.add(elem)
 	}
 
-	Void update(XElem elem) {
+	Void update(Elem elem) {
 		rootBucket.update(elem)
 	}	
 
-	Void remove(XElem elem) {
-		rootBucket.remove(elem)
+	Void remove(Elem elem) {
+		rootBucket.remove(elem, true)
 	}
-	
-	private XElem? findMatch(XNode? elem, Selector selector) {
+
+	private Elem? findMatch(Elem? elem, Selector selector) {
 		if (selector.combinator == Combinator.descendant) {
 			elem = elem?.parent
 			while (isElement(elem) && matches(elem, selector) == null) {
@@ -152,25 +159,23 @@ class SizzleDoc {
 			parent := elem?.parent
 			if (!isElement(parent))
 				return null
-			index := (parent as XElem).elems.indexSame(elem)
+			index := (parent as Elem).children.indexSame(elem)
 			if (index < 1)
 				return null
-			elem = (parent as XElem).elems.getSafe(index - 1)
+			elem = (parent as Elem).children.getSafe(index - 1)
 			return matches(elem, selector)
 		}
 		
 		return null
 	}
 	
-	private XElem? matches(XElem? elem, Selector selector) {
+	private Elem? matches(Elem? elem, Selector selector) {
 		if (elem == null)
 			return null
 		return NodeBucketSingle(elem).select(selector)
 	}
 	
-	private static Bool isElement(XNode? node) {
-		(node as XElem) != null
+	private static Bool isElement(Elem? node) {
+		(node as Elem) != null
 	}
 }
-
-

@@ -16,9 +16,9 @@ internal class SizzleTest : Test {
 		throw Err("$errType not thrown")
 	}
 
-	Void verifyElem(XElem elem, Str name, Str? value) {
+	Void verifyElem(Elem elem, Str name, Str? value) {
 		verifyEq(elem.name, name)
-		verifyEq(elem.text?.val, value)
+		verifyEq(elem.text, value)
 	}
 	
 }
