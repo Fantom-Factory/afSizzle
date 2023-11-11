@@ -1,27 +1,27 @@
 
 internal class NodeBucketMulti {
 	
-	private ElemBucket 		typeBucket	:= ElemBucket() 
-	private ElemBucket 		classBucket	:= ElemBucket() 
-	private Str:ElemBucket 	attrBuckets	:= Str:ElemBucket[:] // { caseInsensitive = true } - done through .lower
+	private SElemBucket 		typeBucket	:= SElemBucket() 
+	private SElemBucket 		classBucket	:= SElemBucket() 
+	private Str:SElemBucket 	attrBuckets	:= Str:SElemBucket[:] // { caseInsensitive = true } - done through .lower
 	
-	new make(Elem elem, Bool recurse) {
+	new make(SElem elem, Bool recurse) {
 		walk(elem, recurse)
 	}
 	
-	Void add(Elem elem) {
+	Void add(SElem elem) {
 		walk(elem, true)
 	}	
 
-	Void update(Elem elem, Bool recurse := false) {
-		// remove all trace of Elem
+	Void update(SElem elem, Bool recurse := false) {
+		// remove all trace of SElem
 		remove(elem, recurse)
 
 		// ...and add it again!
 		walk(elem, recurse)
 	}	
 
-	Void remove(Elem elem, Bool recurse) {
+	Void remove(SElem elem, Bool recurse) {
 		if (recurse)
 			elem.children.each { this.remove(it, recurse) }
 
@@ -35,7 +35,7 @@ internal class NodeBucketMulti {
 		// and Docs in testing are pretty short lived, so why waste precious processing cycles!?
 	}
 	
-	private Void walk(Elem elem, Bool recurse) {
+	private Void walk(SElem elem, Bool recurse) {
 		typeBucket[elem.name] = elem
 
 		elem.attr("class")?.split?.each {
@@ -44,7 +44,7 @@ internal class NodeBucketMulti {
 
 		elem.attrs.each |val, key| {
 			// CASE-INSENSITIVITY
-			bucket := attrBuckets.getOrAdd(key.lower) { ElemBucket() }
+			bucket := attrBuckets.getOrAdd(key.lower) { SElemBucket() }
 			bucket[val.trim] = elem
 		}
 		
@@ -52,13 +52,13 @@ internal class NodeBucketMulti {
 			elem.children.each { walk(it, recurse) }
 	}
 
-	Elem[] select(Selector selector) {
+	SElem[] select(Selector selector) {
 		types 	:= (selector.type == "*") ? typeBucket.all : typeBucket[selector.type]
 		gotten	:= types
 		
 		if (!selector.id.isEmpty) {
 			// CASE-INSENSITIVITY - the "id"
-			ids 	:= attrBuckets["id"]?.get(selector.id) ?: Elem#.emptyList
+			ids 	:= attrBuckets["id"]?.get(selector.id) ?: SElem#.emptyList
 			gotten	= gotten.intersection(ids)
 		}
 
@@ -78,23 +78,23 @@ internal class NodeBucketMulti {
 	}
 }
 
-internal class ElemBucket {
-	Str:Elem[]	elems	:= Str:Elem[][:]
-	Elem[]		all		:= Elem[,]
+internal class SElemBucket {
+	Str:SElem[]	elems	:= Str:SElem[][:]
+	SElem[]		all		:= SElem[,]
 
 	@Operator
-	Elem[] get(Str? name) {
-		elems[name ?: Str.defVal] ?: Elem#.emptyList
+	SElem[] get(Str? name) {
+		elems[name ?: Str.defVal] ?: SElem#.emptyList
 	}
 
 	** set() is really add()
 	@Operator
-	Void set(Str name, Elem elem) {
+	Void set(Str name, SElem elem) {
 		// CASE-INSENSITIVITY
 		name = name.lower
 		elems := this.elems.get(name)
 		if (elems == null) {
-			elems = Elem[,]
+			elems = SElem[,]
 			this.elems[name] = elems
 		}
 		if (elems.contains(elem) == false)
@@ -104,7 +104,7 @@ internal class ElemBucket {
 			all.add(elem)
 	}
 	
-	Void remove(Elem elem) {
+	Void remove(SElem elem) {
 		elems.each { it.remove(elem) }
 		all.remove(elem)
 	}
@@ -114,12 +114,12 @@ internal class ElemBucket {
 
 internal class NodeBucketSingle {
 	
-	Elem	theElement
+	SElem	theElement
 	Str 	elemType
 	Str[]	elemClasses
 	Str:Str	elemAttrs	:= [Str:Str][:]	// { caseInsensitive = true } - done through .lower
 	
-	new make(Elem elem) {
+	new make(SElem elem) {
 		theElement	= elem
 		// CASE-INSENSITIVITY
 		elemType	= elem.name.lower
@@ -132,7 +132,7 @@ internal class NodeBucketSingle {
 		}
 	}
 
-	Elem? select(Selector selector) {
+	SElem? select(Selector selector) {
 		match := (selector.type == "*") || (selector.type == elemType)
 		
 		if (!selector.id.isEmpty) {

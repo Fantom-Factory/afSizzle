@@ -22,7 +22,7 @@ class SizzleXml {
 		private set { }
 	}
 	
-	private new make(Elem elem) {
+	private new make(SElem elem) {
 		this.doc = SizzleDoc(elem)
 	}
 
@@ -41,7 +41,7 @@ class SizzleXml {
 
 	** Create a 'SizzleXml' from an XML element.
 	static new fromXElem(XElem elem) {
-		SizzleXml.make(Elem(elem))
+		SizzleXml.make(SElem(elem))
 	}
 
 	** Queries the document with the given CSS selector any returns any matching elements.
@@ -55,7 +55,7 @@ class SizzleXml {
 	** 
 	** Throws 'ParseErr' if the CSS selector is invalid and 'checked' is 'true'.
 	XElem[] selectFrom(XElem parent, Str cssSelector, Bool checked := true) {
-		doc.selectFrom(Elem(parent), cssSelector, checked).map { it.toNative }
+		doc.selectFrom(SElem(parent), cssSelector, checked).map { it.toNative }
 	}
 	
 	** An alias for 'select()'
@@ -66,23 +66,23 @@ class SizzleXml {
 	
 	** Adds another root element.
 	Void add(XElem elem) {
-		doc.add(Elem(elem))
+		doc.add(SElem(elem))
 	}
 
 	** Updates / refreshes the given Elem - must have already been added. 
 	Void update(XElem elem, Bool recurse := false) {
-		doc.update(Elem(elem), recurse)
+		doc.update(SElem(elem), recurse)
 	}	
 
 	** Removed the the given Elem.
 	Void remove(XElem elem) {
-		doc.remove(Elem(elem))
+		doc.remove(SElem(elem))
 	}
 }
 
 
 
-internal class XmlElem : Elem {
+internal class XmlElem : SElem {
 	private XElem		elem
 	private XmlElem?	parent_
 	private [Str:Str]?	attrs_
@@ -115,13 +115,13 @@ internal class XmlElem : Elem {
 		elem.text?.val ?: ""
 	}
 	
-	override Elem? parent() {
+	override SElem? parent() {
 		if (parent_ == null)
 			parent_ = (elem.parent as XElem) == null ? null : XmlElem(elem.parent)
 		return parent_
 	}
 	
-	override Elem[] children() {
+	override SElem[] children() {
 		if (children_ == null)
 			children_ = elem.elems.map { XmlElem(it) }
 		return children_

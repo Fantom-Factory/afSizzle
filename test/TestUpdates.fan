@@ -6,7 +6,7 @@ internal class TestUpdates : SizzleTest {
 		doc := SizzleXml("<html><h1>names</h1><p><span>tom</span><span>dick</span><span>harry</span></p></html>")
 		
 		dick := doc.select("span")[1]
-		verifyElem(Elem(dick), "span", "dick")
+		verifyElem(SElem(dick), "span", "dick")
 		
 		// test class updates
 		dick.addAttr("class", "foo")

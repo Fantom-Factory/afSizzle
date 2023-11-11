@@ -1,7 +1,7 @@
 using xml::XElem
 
 ** An abstraction around various Elem implementations.
-mixin Elem {
+mixin SElem {
 	
 	** Create a Elem from an XML XElem instance.
 	static new fromXml(XElem elem) {
@@ -21,10 +21,10 @@ mixin Elem {
 	abstract Str text()
 
 	** Returns the parent tag.
-	abstract Elem? parent()
+	abstract SElem? parent()
 	
 	** Returns child Elems.
-	abstract Elem[] children()
+	abstract SElem[] children()
 	
 	** Returns the underlying elem object.
 	@NoDoc

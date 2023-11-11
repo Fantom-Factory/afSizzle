@@ -53,24 +53,24 @@ internal const class AttrSelector {
 		this.value	= matcher.group(3)
 	}
 
-	Elem[] matchMultiNode(Str:ElemBucket buckets) {
+	SElem[] matchMultiNode(Str:SElemBucket buckets) {
 		if (isAny) {
-			return buckets[name]?.all ?: Elem#.emptyList
+			return buckets[name]?.all ?: SElem#.emptyList
 		}
 		if (isExact) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key == value
-			}?.vals?.flatten ?: Elem#.emptyList
+			}?.vals?.flatten ?: SElem#.emptyList
 		}
 		if (isWhitespace) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key.split.contains(value)
-			}?.vals?.flatten ?: Elem#.emptyList
+			}?.vals?.flatten ?: SElem#.emptyList
 		}
 		if (isLang) {
 			return buckets[name]?.elems?.findAll |val, key -> Bool| { 
 				key == value || key.startsWith("${value}-")
-			}?.vals?.flatten ?: Elem#.emptyList
+			}?.vals?.flatten ?: SElem#.emptyList
 		}
 		throw Err("WTF is a ${toStr}?")
 	}
@@ -144,7 +144,7 @@ internal const class PseudoSelector {
 		return name != null 
 	}
 	
-	Bool matches(Elem elem) {
+	Bool matches(SElem elem) {
 		if (!active)
 			return true
 		
@@ -181,11 +181,11 @@ internal const class PseudoSelector {
 		throw Err("WTF is a '$name($value)' pseudo selector?")
 	}
 	
-	private Str? findLang(Elem? elem) {
+	private Str? findLang(SElem? elem) {
 		if (elem == null)
 			return null
 		// CASE-INSENSITIVITY
-		lang := (elem as Elem)?.attrs?.find |val, key| { key.equalsIgnoreCase("lang") || key.equalsIgnoreCase("xml:lang") }
+		lang := (elem as SElem)?.attrs?.find |val, key| { key.equalsIgnoreCase("lang") || key.equalsIgnoreCase("xml:lang") }
 		return (lang != null) ? lang.lower : findLang(elem.parent)
 	}
 }
