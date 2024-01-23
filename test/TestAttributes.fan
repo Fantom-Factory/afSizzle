@@ -147,5 +147,40 @@ internal class TestAttributes : SizzleTest {
 		verifyEq(elems.size, 1)
 		verifyElem(elems[0], "h1", "names")
 	}
+	
+	Void testAttrCaseSensitity() {
+		doc := SizzleDoc("""<html><p test="domjax">test text</p></html>""")
+		
+		elems := doc.select("[test=DOMJAX i]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "p", "test text")
+		
+		elems = doc.select("[test=domjax i]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "p", "test text")
+		
+		elems = doc.select("[test=domJax i]")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "p", "test text")
+		
+		elems = doc.select("""[test="domJax" i]""")
+		verifyEq(elems.size, 1)
+		verifyElem(elems[0], "p", "test text")
+		
+		// an 'i' without a space should not be erroneously picked up
+		elems = doc.select("[test=domJaxi]")
+		verifyEq(elems.size, 0)
+
+		elems = doc.select("""[test="domJaxi"]""")
+		verifyEq(elems.size, 0)
+		
+		// an invalid tag should not return anything
+		elems = doc.select("""[test="domjax" d]""")
+		verifyEq(elems.size, 0)
+		
+		elems = doc.select("[test=domjax d]")
+		verifyEq(elems.size, 0)
+
+	}
 }
 

@@ -2,7 +2,7 @@
 ** Test Str:
 ** attr1[wot] attr2[wot=ever] attr3[wot~=ever] attr4[wot|=ever] attr5[wot~="ever"] attr6[wot|='ever']
 internal const class Selector {
-	private static const Str 	attrStr 	:= Str<|\[(\w+)(?:([\~|])?=[\'\"]?([^\]\'\"]+)[\'\"]?)?\]|>.replace("\\w", Str<| [^#\.\s\[\]\<\+\~|=] |>.trim)
+	private static const Str 	attrStr 	:= Str<|\[(\w+)(?:([\~|])?=[\'\"]?([^\]\'\"\s]+)[\'\"]?)?\s?([i]?)\]|>.replace("\\w", Str<| [^#\.\s\[\]\<\+\~|=] |>.trim)
 	private static const Regex 	attrRegex	:= Regex.fromStr(attrStr)
 	
 	const Str 	type
