@@ -1,8 +1,8 @@
-# Sizzle v1.0.6
+# Sizzle v1.1.0
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](https://fantom-lang.org/)
-[![pod: v1.0.6](http://img.shields.io/badge/pod-v1.0.6-yellow.svg)](http://eggbox.fantomfactory.org/pods/afSizzle)
+[![pod: v1.1.0](http://img.shields.io/badge/pod-v1.1.0-yellow.svg)](http://eggbox.fantomfactory.org/pods/afSizzle)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
@@ -47,7 +47,7 @@ Or install `Sizzle` with [fanr](https://fantom.org/doc/docFanr/Tool.html#install
 
 To use in a [Fantom](https://fantom-lang.org/) project, add a dependency to `build.fan`:
 
-    depends = ["sys 1.0", ..., "afSizzle 1.0"]
+    depends = ["sys 1.0", ..., "afSizzle 1.1"]
 
 ## <a name="documentation"></a>Documentation
 
@@ -61,7 +61,7 @@ Full API & fandocs are available on the [Eggbox](http://eggbox.fantomfactory.org
     class Example {
         Void main() {
             xhtml := "<html><p class='welcome'>Hello from Sizzle!</p></html>"
-            elems := SizzleDoc(xhtml).select("p.welcome")
+            elems := SizzleXml(xhtml).select("p.welcome")
             echo(elems.first.text)  // --> Hello from Sizzle!
         }
     }
@@ -79,7 +79,7 @@ Full API & fandocs are available on the [Eggbox](http://eggbox.fantomfactory.org
 
 [SizzleDoc](http://eggbox.fantomfactory.org/pods/afSizzle/api/SizzleDoc) contains compiled and cached document information and is intended for re-use with multiple CSS selectors:
 
-    doc    := SizzleDoc("<html><p class='welcome'>Hello from Sizzle!</p></html>")
+    doc    := SizzleXml("<html><p class='welcome'>Hello from Sizzle!</p></html>")
     elems1 := doc.select("p.welcome")
     elems2 := doc.select("html p")
 
